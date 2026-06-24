@@ -1,7 +1,7 @@
 package com.game.scenes;
 
 import com.game.core.*;
-import com.game.entities.*;
+import com.game.entity.*;
 import com.game.ui.CombatView;
 
 public class CombatTemplate extends ModularScene {

@@ -2,7 +2,7 @@ package com.game;
 
 import com.game.core.SceneDirector;
 import com.game.dialogue.DialogueNode;
-import com.game.entities.Enemy;
+import com.game.entity.Enemy;
 import com.game.scenes.*;
 
 import javafx.application.Application;

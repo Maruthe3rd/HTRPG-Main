@@ -1,8 +1,6 @@
 package com.game.core;
 
-import com.game.entities.Player;
-import com.game.scenes.DialogueTemplate;
-import javafx.scene.Scene;
+import com.game.entity.Player;
 import javafx.scene.layout.StackPane;
 import java.util.HashMap;
 import java.util.Map;

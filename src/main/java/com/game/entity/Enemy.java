@@ -1,4 +1,4 @@
-package com.game.entities;
+package com.game.entity;
 
 public class Enemy extends GameCharacter {
     private String spellWeakness; // e.g. "FIREBALL"
