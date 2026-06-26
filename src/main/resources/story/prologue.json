@@ -1,0 +1,80 @@
+{
+  "sceneId": "PROLOGUE_INTERROGATION",
+  "startNodeId": "NODE_START",
+  "nodes": {
+    "NODE_START": {
+      "speaker": "Interrogator",
+      "text": "Where were you on the night of Sector 7's sudden collapse?",
+      "backgroundPath": "/images/interrogation_room.jpg",
+      "choices": [
+        {
+          "text": "Answer confidently.",
+          "targetNodeId": "NODE_ROUTE_CONFIDENT"
+        },
+        {
+          "text": "Apologize and look down at your handcuffs.",
+          "targetNodeId": "NODE_ROUTE_APOLOGETIC"
+        },
+        {
+          "text": "[Bypass] Slam Sector 7 Master Schematics onto the table.",
+          "targetNodeId": "NODE_BRIDGE_TRUE",
+          "requiredFlag": "METAKEY_SECTOR7_SCHEMATICS"
+        }
+      ]
+    },
+    "NODE_ROUTE_CONFIDENT": {
+      "speaker": "You",
+      "text": "I was off-duty, sleeping inside the lower sub-barracks section. Check your internal check-in logs.",
+      "backgroundPath": "/images/interrogation_room.jpg",
+      "choices": [
+        {
+          "text": "Wait for his calculation...",
+          "targetNodeId": "NODE_FUNNEL_CONVERGE"
+        }
+      ]
+    },
+    "NODE_ROUTE_APOLOGETIC": {
+      "speaker": "You",
+      "text": "I... I honestly can't recall. Everything was a massive blur of emergency smoke and flashing red tactical sirens...",
+      "backgroundPath": "/images/interrogation_room.jpg",
+      "choices": [
+        {
+          "text": "Wait for his response...",
+          "targetNodeId": "NODE_FUNNEL_CONVERGE"
+        }
+      ]
+    },
+    "NODE_FUNNEL_CONVERGE": {
+      "speaker": "Interrogator",
+      "text": "Hmph. Either way, you're hiding critical data. Cooperate with core command now, or face immediate containment.",
+      "backgroundPath": "/images/interrogation_room.jpg",
+      "choices": [
+        {
+          "text": "Stand your ground and prepare for defensive combat.",
+          "targetNodeId": "COMBAT_READY",
+          "triggerAction": "TRIGGER_COMBAT",
+          "actionParameter": "ENEMY_INTERROGATOR_BOSS"
+        },
+        {
+          "text": "Submit quietly and accept life containment.",
+          "targetNodeId": "TRIGGER_BAD_ENDING",
+          "triggerAction": "SET_FLAG_AND_END",
+          "actionParameter": "METAKEY_SECTOR7_SCHEMATICS"
+        }
+      ]
+    },
+    "NODE_BRIDGE_TRUE": {
+      "speaker": "Interrogator",
+      "text": "What?! How did you acquire these classified blueprints? Fine... you've completely forced my hand. Follow me out back.",
+      "backgroundPath": "/images/corridor_escape.jpg",
+      "choices": [
+        {
+          "text": "Step into the True Route storyline...",
+          "targetNodeId": "TRUE_SCENE_START",
+          "triggerAction": "TRIGGER_COMBAT",
+          "actionParameter": "ENEMY_TRUE_ROUTE_GUARDIAN"
+        }
+      ]
+    }
+  }
+}

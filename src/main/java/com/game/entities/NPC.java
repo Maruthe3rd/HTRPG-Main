@@ -1,4 +1,4 @@
-package com.game.entity;
+package com.game.entities;
 
 public class NPC extends GameCharacter {
     private int patience;

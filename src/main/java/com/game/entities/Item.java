@@ -1,4 +1,4 @@
-package com.game.entity;
+package com.game.entities;
 
 public class Item {
     // SQL-Implementation pending

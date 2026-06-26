@@ -1,24 +1,22 @@
 package com.game.dialogue;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 public class DialogueNode {
-    private final String speaker;
-    private final String text;
-    private final Map<String, Runnable> choices = new LinkedHashMap<>();
-
-    public DialogueNode(String speaker, String text) {
-        this.speaker = speaker;
-        this.text = text;
-    }
-
-    public DialogueNode addChoice(String choiceText, Runnable action) {
-        choices.put(choiceText, action);
-        return this; // Allows chaining
-    }
+    private String speaker;
+    private String text;
+    private String backgroundPath;
+    private List<DialogueChoice> choices;
 
     public String getSpeaker() { return speaker; }
+    public void setSpeaker(String speaker) { this.speaker = speaker; }
+
     public String getText() { return text; }
-    public Map<String, Runnable> getChoices() { return choices; }
+    public void setText(String text) { this.text = text; }
+
+    public String getBackgroundPath() { return backgroundPath; }
+    public void setBackgroundPath(String backgroundPath) { this.backgroundPath = backgroundPath; }
+
+    public List<DialogueChoice> getChoices() { return choices; }
+    public void setChoices(List<DialogueChoice> choices) { this.choices = choices; }
 }
