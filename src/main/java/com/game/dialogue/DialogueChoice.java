@@ -1,9 +1,5 @@
 package com.game.dialogue;
 
-/**
- * Represents an actionable player decision option inside a dialogue sequence.
- * Handles convergence tracking, lock/unlock mechanics, and event flags.
- */
 public class DialogueChoice {
     private String text;
     private String targetNodeId;
@@ -12,6 +8,11 @@ public class DialogueChoice {
 
     private String triggerAction;
     private String actionParameter;
+
+    private String minigameId; //launches names game instead of targetedNodeId. Once game is done it goes on
+
+    public String getMinigameId() { return minigameId; }
+    public void setMinigameId(String minigameId) { this.minigameId = minigameId; }
 
     public String getText() { return text; }
     public void setText(String text) { this.text = text; }

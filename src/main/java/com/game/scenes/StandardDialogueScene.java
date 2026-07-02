@@ -2,6 +2,7 @@ package com.game.scenes;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.game.core.SceneDirector;
 import com.game.core.ScenePayload;
 import com.game.dialogue.DialogueChoice;
 import com.game.dialogue.DialogueNode;
@@ -20,6 +21,7 @@ public class StandardDialogueScene extends ModularScene {
     private DialogueTemplate template;
     private String currentNodeId;
     private DialogueView view;
+    private String storyFile; // kept so we can hand it back to ourselves after a minigame
 
     public StandardDialogueScene(StackPane masterViewport) {
         super(masterViewport);
@@ -27,7 +29,7 @@ public class StandardDialogueScene extends ModularScene {
 
     @Override
     protected void onEnter(ScenePayload payload) {
-        String storyFile = payload.metadata("STORY_FILE", String.class);
+        storyFile = payload.metadata("STORY_FILE", String.class);
         if (storyFile == null) {
             storyFile = DEFAULT_STORY_FILE;
         }
@@ -105,7 +107,21 @@ public class StandardDialogueScene extends ModularScene {
         }
 
         for (DialogueChoice choice : node.getChoices()) {
-            view.addChoiceButton(choice.getText(), () -> showNode(choice.getTargetNodeId()), true);
+            view.addChoiceButton(choice.getText(), () -> handleChoice(choice), true);
+        }
+    }
+
+    private void handleChoice(DialogueChoice choice) {
+        if (choice.getMinigameId() != null) {
+            // This choice launches a minigame; the target node is only reached once it finishes.
+            ScenePayload minigamePayload = new ScenePayload("MINIGAME", payload.activeHeroId())
+                    .withMetadata("MINIGAME_ID", choice.getMinigameId())
+                    .withMetadata("RETURN_STORY_FILE", storyFile)
+                    .withMetadata("RETURN_NODE_ID", choice.getTargetNodeId());
+            SceneDirector.switchScene(new MiniGameScene(masterViewport), minigamePayload);
+        } else {
+            // No minigame attached -> jump straight to the next node/scene as before.
+            showNode(choice.getTargetNodeId());
         }
     }
 }

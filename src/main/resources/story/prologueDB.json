@@ -99,6 +99,7 @@
         {
         "text": "An der Tradition teilnehmen",
         "targetNodeId": "NODE_CEREMONY_COMPLETE",
+        "minigameId": "CASH_DROP",
         "triggerAction": "SET_FLAG_CEREMONY",
         "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE"
         },
@@ -123,6 +124,7 @@
           "text": "An der Tradition teilnehmen",
           "targetNodeId": "NODE_CEREMONY_COMPLETE",
           "triggerAction": "SET_FLAG_CEREMONY",
+          "minigameId": "CASH_DROP",
           "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE"
         },
         {
@@ -135,3 +137,5 @@
     }
   }
 }
+
+
