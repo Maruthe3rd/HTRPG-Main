@@ -63,7 +63,7 @@ public class MainMenuScene extends ModularScene {
 
         Label btnBegin = createMenuOption("Begin", () -> {
             director.getPayload().put("START_NODE", "TAVERN_START");
-            director.navigateTo("DIALOGUE_SCENE");
+            director.navigateTo("CHAR_CREATOR");
         });
 
         Label btnResume = createMenuOption("Resume", () -> {

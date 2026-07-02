@@ -1,5 +1,6 @@
 package com.game;
 import com.game.core.SceneDirector;
+import com.game.scenes.CharCreatorScene;
 import com.game.scenes.MainMenuScene;
 import com.game.scenes.StandardDialogueScene;
 import javafx.application.Application;
@@ -16,6 +17,7 @@ public class MainApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         director.registerScene("MAIN_MENU", new MainMenuScene(director, director.getMasterViewport()));
+        director.registerScene("CHAR_CREATOR", new CharCreatorScene(director, director.getMasterViewport()));
         director.registerScene("DIALOGUE_SCENE", new StandardDialogueScene(director, director.getMasterViewport()));
         director.navigateTo("MAIN_MENU");
     }
