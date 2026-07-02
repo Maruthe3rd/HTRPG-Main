@@ -50,6 +50,10 @@ public final class SceneDirector {
 
     private static void doSwitch(ModularScene targetScene, ScenePayload payload) {
         try {
+            if (currentScene != null) {
+                currentScene.exit();
+            }
+
             targetScene.init(payload);
             targetScene.buildUI();
 

@@ -1,22 +1,21 @@
 package com.game;
+
 import com.game.core.SceneDirector;
+import com.game.core.ScenePayload;
 import com.game.scenes.MainMenuScene;
-import com.game.scenes.StandardDialogueScene;
 import javafx.application.Application;
-import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
-        SceneDirector director = new SceneDirector();
+        SceneDirector.initialize(primaryStage);
 
-        Scene scene = new Scene(director.getMasterViewport(), 1920, 1080);
+        StackPane masterViewport = new StackPane();
         primaryStage.setTitle("(Half) Text RPG");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        director.registerScene("MAIN_MENU", new MainMenuScene(director, director.getMasterViewport()));
-        director.registerScene("DIALOGUE_SCENE", new StandardDialogueScene(director, director.getMasterViewport()));
-        director.navigateTo("MAIN_MENU");
+
+        ScenePayload initialPayload = new ScenePayload("MAIN_MENU", "unassigned");
+        SceneDirector.switchScene(new MainMenuScene(masterViewport), initialPayload);
     }
 }

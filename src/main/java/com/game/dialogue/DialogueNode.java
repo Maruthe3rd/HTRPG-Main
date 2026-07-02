@@ -8,6 +8,11 @@ public class DialogueNode {
     private String backgroundPath;
     private List<DialogueChoice> choices;
 
+    // Optional: a side effect applied as soon as this node is shown, before
+    // any choice is made (e.g. the crowd's reaction sets an opinion flag).
+    private String triggerAction;
+    private String actionParameter;
+
     public String getSpeaker() { return speaker; }
     public void setSpeaker(String speaker) { this.speaker = speaker; }
 
@@ -19,4 +24,10 @@ public class DialogueNode {
 
     public List<DialogueChoice> getChoices() { return choices; }
     public void setChoices(List<DialogueChoice> choices) { this.choices = choices; }
+
+    public String getTriggerAction() { return triggerAction; }
+    public void setTriggerAction(String triggerAction) { this.triggerAction = triggerAction; }
+
+    public String getActionParameter() { return actionParameter; }
+    public void setActionParameter(String actionParameter) { this.actionParameter = actionParameter; }
 }

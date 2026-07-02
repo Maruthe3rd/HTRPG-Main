@@ -24,15 +24,15 @@ public class MainMenuScene extends ModularScene {
             75);
 
 
-    public MainMenuScene(SceneDirector director, StackPane masterViewport) {
-        super(director, masterViewport);
+    public MainMenuScene(StackPane masterViewport) {
+        super(masterViewport);
     }
 
     @Override
-    public void onEnter(ScenePayload payload) {}
+    protected void onEnter(ScenePayload payload) {}
 
     @Override
-    public void onExit() {}
+    protected void onExit() {}
 
     @Override
     protected Parent initializeLayout() {
@@ -62,8 +62,8 @@ public class MainMenuScene extends ModularScene {
         buttonBox.setAlignment(Pos.CENTER);
 
         Label btnBegin = createMenuOption("Begin", () -> {
-            director.getPayload().put("START_NODE", "TAVERN_START");
-            director.navigateTo("DIALOGUE_SCENE");
+            ScenePayload charCreatorPayload = new ScenePayload("CHAR_CREATOR", payload.activeHeroId());
+            SceneDirector.switchScene(new CharCreatorScene(masterViewport), charCreatorPayload);
         });
 
         Label btnResume = createMenuOption("Resume", () -> {

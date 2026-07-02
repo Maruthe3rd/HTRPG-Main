@@ -35,15 +35,15 @@ public class CharCreatorScene extends ModularScene {
     private List<StackPane> cards;
     private List<StackPane> portraitStacks; // rectangle + portrait image, animated together
 
-    public CharCreatorScene(SceneDirector director, StackPane masterViewport) {
-        super(director, masterViewport);
+    public CharCreatorScene(StackPane masterViewport) {
+        super(masterViewport);
     }
 
     @Override
-    public void onEnter(ScenePayload payload) {}
+    protected void onEnter(ScenePayload payload) {}
 
     @Override
-    public void onExit() {}
+    protected void onExit() {}
 
     @Override
     protected Parent initializeLayout() {
@@ -170,8 +170,15 @@ public class CharCreatorScene extends ModularScene {
 
     private void confirmSelection() {
         String chosenRace = RACE_IDS[selectedIndex];
-        director.getPayload().put("SELECTED_RACE", chosenRace);
         System.out.println("Race selected: " + chosenRace);
-        // director.navigateTo("NEXT_SCENE_NAME"); // wire this up once you know where to go next
+        payload = payload.withMetadata("SELECTED_RACE", chosenRace);
+
+        if ("dragonborn".equals(chosenRace)) {
+            ScenePayload dialoguePayload = new ScenePayload("DIALOGUE_SCENE", payload.activeHeroId())
+                    .withMetadata("STORY_FILE", "/story/prologueDB.json");
+            SceneDirector.switchScene(new StandardDialogueScene(masterViewport), dialoguePayload);
+        } else {
+            System.out.println("No story file wired up for '" + chosenRace + "' yet.");
+        }
     }
 }
