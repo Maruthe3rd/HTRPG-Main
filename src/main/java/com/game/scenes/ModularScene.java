@@ -1,29 +1,17 @@
 package com.game.scenes;
 
-import com.game.core.SceneDirector;
 import com.game.core.ScenePayload;
-import javafx.scene.Parent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.Scene;
 
 public abstract class ModularScene {
 
-    protected final SceneDirector director;
-    protected final StackPane masterViewport;
-    protected Parent root;
+    protected ScenePayload payload;
 
-    public ModularScene(SceneDirector director, StackPane masterViewport) {
-        this.director = director;
-        this.masterViewport = masterViewport;
-        this.root = initializeLayout();
-    }
+    protected Scene scene;
 
-    protected abstract Parent initializeLayout();
+    public abstract void init(ScenePayload payload);
 
-    public abstract void onEnter(ScenePayload payload);
+    public abstract void buildUI();
 
-    public abstract void onExit();
-
-    public Parent getRoot() {
-        return this.root;
-    }
+    public abstract Scene getScene();
 }

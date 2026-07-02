@@ -1,5 +1,6 @@
 package com.game.ui;
 
+import com.game.scenes.MainMenuScene;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -11,6 +12,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class DialogueView extends StackPane {
+    public static Font BBTitle = Font.loadFont(
+            MainMenuScene.class.getResource("/fonts/pixel/MxPlus_ToshibaTxL1_8x16.ttf").toExternalForm(),
+            150);
+
+    public static Font BBTiverent = Font.loadFont(
+            MainMenuScene.class.getResource("/fonts/pixel/Mx437_ToshibaTxL2_8x8.ttf").toExternalForm(),
+            75);
 
     private final ImageView backgroundContainer;
     private final Label speakerLabel;
@@ -83,12 +91,12 @@ public class DialogueView extends StackPane {
         choiceBtn.setMinHeight(50);
 
         if (isUnlocked) {
-            choiceBtn.setStyle("-fx-font-family: 'Monospace'; -fx-font-size: 18px; -fx-background-color: #000000; -fx-text-fill: #00FF00; -fx-border-color: #00FF00; -fx-border-width: 2px;");
+            choiceBtn.setFont(BBTiverent);
             choiceBtn.setOnAction(e -> onSelectAction.run());
         } else {
             choiceBtn.setText("[LOCKED] " + text);
             choiceBtn.setDisable(true);
-            choiceBtn.setStyle("-fx-font-family: 'Monospace'; -fx-font-size: 18px; -fx-background-color: #222222; -fx-text-fill: #555555; -fx-border-color: #555555; -fx-border-width: 2px;");
+            choiceBtn.setFont(BBTiverent);
         }
 
         choiceContainer.getChildren().add(choiceBtn);
