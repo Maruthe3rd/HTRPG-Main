@@ -10,72 +10,126 @@
         {
           "title": "Selbstsicher",
           "text": "Seit meiner Geburt!",
-          "targetNodeId": "NODE_FR"
+          "targetNodeId": "NODE_ROUTE_CONFIDENT"
         },
         {
-          "title": "Feundlich",
+          "title": "Freundlich",
           "text": "Ich werde mein bestes geben.",
-          "targetNodeId": "NODE_ROUTE_FREINDL"
+          "targetNodeId": "NODE_ROUTE_FRIENDLY"
         },
         {
           "title": "Unsicher",
           "text": "Ich hoffe es...",
-          "targetNodeId": "NODE_BRIDGE_TRUE",
-          "requiredFlag": "METAKEY_SECTOR7_SCHEMATICS"
+          "targetNodeId": "NODE_ROUTE_UNSURE"
         }
       ]
     },
     "NODE_ROUTE_CONFIDENT": {
-      "speaker": "You",
-      "text": "I was off-duty, sleeping inside the lower sub-barracks section. Check your internal check-in logs.",
-      "backgroundPath": "/images/interrogation_room.jpg",
+      "speaker": "Bruder",
+      "text": "So selbstverliebt wie immer. Komm, die Halle wartet schon.",
+      "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
-          "text": "Wait for his calculation...",
-          "targetNodeId": "NODE_FUNNEL_CONVERGE"
+          "text": "Ihm zur Zeremonie folgen...",
+          "triggerAction": "SET_FLAG_AT_CEREMONY",
+          "targetNodeId": "NODE_CEREMONY_START"
         }
       ]
     },
-    "NODE_ROUTE_APOLOGETIC": {
-      "speaker": "You",
-      "text": "I... I honestly can't recall. Everything was a massive blur of emergency smoke and flashing red tactical sirens...",
-      "backgroundPath": "/images/interrogation_room.jpg",
+    "NODE_ROUTE_FRIENDLY": {
+      "speaker": "Bruder",
+      "text": "Das soltest du auch. Dein bestes wird dringend nötig sein",
+      "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
-          "text": "Wait for his response...",
-          "targetNodeId": "NODE_FUNNEL_CONVERGE"
+          "text": "Ihm zur Zeremonie folgen...",
+          "triggerAction": "SET_FLAG_AT_CEREMONY",
+          "targetNodeId": "NODE_CEREMONY_START"
         }
       ]
     },
-    "NODE_FUNNEL_CONVERGE": {
-      "speaker": "Interrogator",
-      "text": "Hmph. Either way, you're hiding critical data. Cooperate with core command now, or face immediate containment.",
-      "backgroundPath": "/images/interrogation_room.jpg",
+    "NODE_ROUTE_UNSURE": {
+      "speaker": "Bruder",
+      "text": "Wenn du jetzt schon so unsicher bist, wie wird es dann wärend der Zeremonie? Reiß dich doch einfach zusammen und bring unseren Familiennamen nicht in Verruf. ",
+      "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
-          "text": "Stand your ground and prepare for defensive combat.",
-          "targetNodeId": "COMBAT_READY",
-          "triggerAction": "TRIGGER_COMBAT",
-          "actionParameter": "ENEMY_INTERROGATOR_BOSS"
+          "text": "Ihm zur Zeremonie folgen...",
+          "triggerAction": "SET_FLAG_AT_CEREMONY",
+          "targetNodeId": "NODE_CEREMONY_START"
+        }
+      ]
+    },
+    "NODE_CEREMONY_START": {
+      "speaker": "THE VOICE",
+      "text": "Die große Halle ist bis auf den letzten Platz gefüllt. Adel und Volk haben sich versammelt, um deine Erhebung in den Herzogstand zu feiern.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "choices": [
+        {
+          "text": "Die Zeremonie beginnt...",
+          "targetNodeId": "NODE_OPPOSITION_VOICE"
+        }
+      ]
+    },
+    "NODE_OPPOSITION_VOICE": {
+      "speaker": "Unbekannte Stimme aus der Menge",
+      "text": "Nicht schon wieder ein solcher Schuppenschuft! Nur Gott weiß wann dieses System endlich ein Ende findet.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "choices": [
+        {
+          "text": "Der Person widersprechen und versuchen dich vor der Menge zu verteidigen",
+          "targetNodeId": "NODE_CROWD_EMBARRASSMENT"
         },
         {
-          "text": "Submit quietly and accept life containment.",
-          "targetNodeId": "TRIGGER_BAD_ENDING",
-          "triggerAction": "SET_FLAG_AND_END",
-          "actionParameter": "METAKEY_SECTOR7_SCHEMATICS"
+          "text": "Schweigen und den König sprechen lassen",
+          "targetNodeId": "NODE_PUBLIC_OPINION_NEUTRAL"
         }
       ]
     },
-    "NODE_BRIDGE_TRUE": {
-      "speaker": "Interrogator",
-      "text": "What?! How did you acquire these classified blueprints? Fine... you've completely forced my hand. Follow me out back.",
-      "backgroundPath": "/images/corridor_escape.jpg",
+    "NODE_CROWD_EMBARRASSMENT": {
+      "speaker": "THE VOICE",
+      "text": "Deine Worte sitzen nicht und du stotterst verzweifelt. Ein Raunen geht durch die Menge, diesmal aus Lachern. Die öffentliche Meinung belächelt dich nun.",
+      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE",
+      "triggerAction": "SET_FLAG_crowdsLaughingstock",
+      "backgroundPath": "/images/throne_hall.jpg",
+
+      "text": "Trotzdessen wirst eingeladen der Tradition des goldenen Regens nachzugehen.",
+      "triggerAction": "SET_FLAG_AND_END",
       "choices": [
         {
-          "text": "Step into the True Route storyline...",
-          "targetNodeId": "TRUE_SCENE_START",
-          "triggerAction": "TRIGGER_COMBAT",
-          "actionParameter": "ENEMY_TRUE_ROUTE_GUARDIAN"
+        "text": "An der Tradition teilnehmen",
+        "targetNodeId": "NODE_CEREMONY_COMPLETE",
+        "triggerAction": "SET_FLAG_CEREMONY",
+        "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE"
+        },
+        {
+          "text": "Nicht an der Tradition teilnehmen",
+          "targetNodeId": "NODE_CEREMONY_COMPLETE",
+          "triggerAction": "SET_FLAG_SKIP_CEREMONY",
+          "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE"
+        }
+      ]
+    },
+    "NODE_PUBLIC_OPINION_NEUTRAL": {
+      "speaker": "THE VOICE",
+      "text": "Du sagst nichts. Die Stimmen gehen langsam im Jubel verloren.",
+      "backgroundPath": "/images/throne_hall.jpg",
+
+      "text": "Trotzdessen wirst eingeladen der Tradition des goldenen Regens nachzugehen.",
+      "triggerAction": "SET_FLAG_AND_END",
+
+      "choices": [
+        {
+          "text": "An der Tradition teilnehmen",
+          "targetNodeId": "NODE_CEREMONY_COMPLETE",
+          "triggerAction": "SET_FLAG_CEREMONY",
+          "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE"
+        },
+        {
+          "text": "Nicht an der Tradition teilnehmen",
+          "targetNodeId": "NODE_CEREMONY_COMPLETE",
+          "triggerAction": "SET_FLAG_SKIP_CEREMONY",
+          "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE"
         }
       ]
     }
