@@ -14,9 +14,9 @@ public final class MetaTimelineManager {
 
     public static final String DRAGONBORN = "Dragonborn";
     public static final String DWARF = "Dwarf";
-    public static final String RABBIT_GIRL = "Rabbit-Girl";
+    public static final String FURRY = "Furry";
 
-    private static final String[] ALL_CHARACTERS = {DRAGONBORN, DWARF, RABBIT_GIRL};
+    private static final String[] ALL_CHARACTERS = {DRAGONBORN, DWARF, FURRY};
 
     private final DatabaseManager databaseManager;
     private final Object operationLock = new Object();
