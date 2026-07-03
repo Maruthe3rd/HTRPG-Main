@@ -176,7 +176,7 @@ public class CharCreatorScene extends ModularScene {
         String storyFile = switch (chosenRace) {
             case "dragonborn" -> "/story/Dragonborn/prologueDB.json";
             case "dwarf" -> "/story/Dwarf/prologueDwarf.json";
-            case "furry" -> "/story/Furry/prologueFurry.json";
+            // case "furry" -> "/story/Furry/prologueFurry.json"; // Furry wird rausgeschrieben
             default -> null;
         };
 
