@@ -1,8 +1,8 @@
 {
   "sceneId": "FAILED_REVOLUTION_DRAGONBORN",
-  "startNodeId": "NODE_REVOLUTION_START",
+  "startNodeId": "NODE_FAILED_REVOLUTION_START",
   "nodes": {
-    "NODE_REVOLUTION_START": {
+    "NODE_FAILED_REVOLUTION_START": {
       "speaker": "THE VOICE",
       "text": "Aufgrund deiner Entscheidungen hast du Überlebt. Jedoch hast du Gerüchte gehört, dass ein bestimmter Zwerg dir sein Helfer während der chaotischen Revolution verstarb.",
       "backgroundPath": "/images/council_chamber.jpg",

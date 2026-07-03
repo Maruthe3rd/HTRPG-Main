@@ -25,8 +25,6 @@ public class CharCreatorScene extends ModularScene {
     private static final String[] RACE_IDS   = {"furry", "dwarf", "dragonborn"};
     private static final String[] RACE_NAMES = {"Furry", "Dwarf", "Dragonborn"};
 
-    // Smaller, dedicated font for the race-name labels so "Dragonborn" fits
-    // inside the card width instead of getting clipped to "Dr...".
     private static final Font CARD_LABEL_FONT = Font.loadFont(
             MainMenuScene.class.getResource("/fonts/pixel/Mx437_ToshibaTxL2_8x8.ttf").toExternalForm(),
             36);
