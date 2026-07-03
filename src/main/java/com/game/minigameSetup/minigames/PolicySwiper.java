@@ -4,8 +4,6 @@ import com.game.minigameSetup.MiniGame;
 
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -90,8 +88,8 @@ public class PolicySwiper implements MiniGame {
     public void update(double dt) {
         if (!swiping) return;
 
-        swipeProgress += 3.0 * dt; // full swipe-out animation takes ~1/3 second
-        double eased = swipeProgress * (2 - swipeProgress); // ease-out, starts fast then settles
+        swipeProgress += 3.0 * dt;
+        double eased = swipeProgress * (2 - swipeProgress);
 
         cardOffsetX = swipeDirection * eased * 1400;
         cardRotation = swipeDirection * eased * 20;
@@ -161,17 +159,15 @@ public class PolicySwiper implements MiniGame {
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.TOP);
 
-        Glow titleGlow = new Glow(0.6);
-        gc.setEffect(titleGlow);
         gc.setFill(Color.web(ACCENT_GREEN));
         gc.setFont(titleFont(54));
         gc.fillText("POLICY SWIPER", w / 2.0, 40);
-        gc.setEffect(null);
 
         gc.setFill(Color.web(ACCENT_GREEN_DIM));
         gc.setFont(bodyFont(26));
         gc.fillText("\u2190 REJECT          ACCEPT \u2192", w / 2.0, 108);
 
+        // card progress + tally, top corners like an in-world HUD
         gc.setTextAlign(TextAlignment.LEFT);
         gc.setFill(Color.web(ACCENT_RED_DIM));
         gc.fillText("REJECTED: " + rejectedCount, 60, 40);
@@ -186,6 +182,8 @@ public class PolicySwiper implements MiniGame {
         gc.fillText("BILL " + (currentIndex + 1) + " / " + policies.size(), w / 2.0, 150);
     }
 
+    // small bar showing where public opinion currently sits, purely for feedback --
+    // keeps the exact per-policy numbers hidden so the swiper stays a gut-call, not a spreadsheet.
     private void drawApprovalMeter(GraphicsContext gc, double w) {
         int worst = policies.stream().mapToInt(p -> Math.abs(p.approvalEffect())).sum();
         double meterW = 500, meterH = 18;
@@ -210,10 +208,8 @@ public class PolicySwiper implements MiniGame {
         gc.translate(CARD_CENTER_X + cardOffsetX, CARD_CENTER_Y);
         gc.rotate(cardRotation);
 
-        gc.setEffect(new DropShadow(30, Color.web("#000000", 0.6)));
         gc.setFill(Color.web(PANEL_BG));
         gc.fillRoundRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 28, 28);
-        gc.setEffect(null);
 
         gc.setStroke(Color.web(ACCENT_GREEN));
         gc.setLineWidth(4);
@@ -240,8 +236,6 @@ public class PolicySwiper implements MiniGame {
         gc.setTextBaseline(VPos.CENTER);
         gc.setFont(titleFont(46));
 
-        gc.setEffect(new Glow(0.4));
-
         gc.setFill(Color.web("#1a0000"));
         gc.fillOval(X_BUTTON_X - BUTTON_RADIUS, X_BUTTON_Y - BUTTON_RADIUS, BUTTON_RADIUS * 2, BUTTON_RADIUS * 2);
         gc.setStroke(Color.web(ACCENT_RED));
@@ -257,10 +251,9 @@ public class PolicySwiper implements MiniGame {
         gc.strokeOval(CHECK_BUTTON_X - BUTTON_RADIUS, CHECK_BUTTON_Y - BUTTON_RADIUS, BUTTON_RADIUS * 2, BUTTON_RADIUS * 2);
         gc.setFill(Color.web(ACCENT_GREEN));
         gc.fillText("\u2713", CHECK_BUTTON_X, CHECK_BUTTON_Y + 4);
-
-        gc.setEffect(null);
     }
 
+    /** Splits text into lines that fit within maxWidth, using the given font for measurement. */
     private List<String> wrapText(String text, Font font, double maxWidth) {
         List<String> lines = new ArrayList<>();
         Text measurer = new Text();
