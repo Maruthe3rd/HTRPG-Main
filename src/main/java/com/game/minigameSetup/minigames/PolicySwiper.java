@@ -16,29 +16,48 @@ import java.util.List;
 
 public class PolicySwiper implements MiniGame {
 
+    private static final String ACCENT_GREEN     = "#00FF66";
+    private static final String ACCENT_GREEN_DIM = "#4F9E6C";
+    private static final String ACCENT_RED       = "#FF4C4C";
+    private static final String ACCENT_RED_DIM   = "#9E4F4F";
+    private static final String BG_COLOR         = "#101010";
+    private static final String PANEL_BG         = "rgba(10,12,10,0.78)";
+
+    private static final Font TITLE_FONT_SRC = Font.loadFont(
+            PolicySwiper.class.getResource("/fonts/pixel/MxPlus_ToshibaTxL1_8x16.ttf").toExternalForm(), 150);
+    private static final Font BODY_FONT_SRC = Font.loadFont(
+            PolicySwiper.class.getResource("/fonts/pixel/Mx437_ToshibaTxL2_8x8.ttf").toExternalForm(), 75);
+
+    private static Font titleFont(double size) {
+        return (TITLE_FONT_SRC != null) ? Font.font(TITLE_FONT_SRC.getFamily(), size) : Font.font("Monospace", size);
+    }
+
+    private static Font bodyFont(double size) {
+        return (BODY_FONT_SRC != null) ? Font.font(BODY_FONT_SRC.getFamily(), size) : Font.font("Monospace", size);
+    }
+
     int publicOpinion = 0;
     //policies
     public record Policy(String policy, int approvalEffect) {}
 
     private final List<Policy> policies = List.of(
-            new Policy("Increase accessibility of schooling for disadvantaged minorities", 5),
-            new Policy("Lower taxes for the rich", -3),
-            new Policy("Alcoholic beverages are now taxed", -2),
-            new Policy("Raise the minimum wage nationwide", 4),
-            new Policy("Conscript peasants into the royal army", -6));
+            new Policy("Den Zugang zur Schulbildung für benachteiligte Minderheiten verbessern", 5),
+            new Policy("Niedrigere Steuern für die Reichen", -3),
+            new Policy("Alkoholische Getränke werden nun besteuert", -2),
+            new Policy("Den Mindestlohn landesweit anheben", 4),
+            new Policy("Bauern in die königliche Armee einziehen", -6));
 
     private int currentIndex = 0; //counts at which policy we are
 
-    //where the card is
-    private static final double CARD_CENTER_X = 400;
-    private static final double CARD_CENTER_Y = 260;
-    private static final double CARD_WIDTH = 420;
-    private static final double CARD_HEIGHT = 220;
+    private static final double CARD_CENTER_X = 960;
+    private static final double CARD_CENTER_Y = 500;
+    private static final double CARD_WIDTH = 900;
+    private static final double CARD_HEIGHT = 420;
 
     //buttons (visual only tho -- arrow keys do the actual thing)
-    private static final double BUTTON_RADIUS = 40;
-    private static final double X_BUTTON_X = 300, X_BUTTON_Y = 480;
-    private static final double CHECK_BUTTON_X = 500, CHECK_BUTTON_Y = 480;
+    private static final double BUTTON_RADIUS = 70;
+    private static final double X_BUTTON_X = 800, X_BUTTON_Y = 830;
+    private static final double CHECK_BUTTON_X = 1120, CHECK_BUTTON_Y = 830;
 
     // swipe animation state - help. ouch.
     private boolean swiping = false;
@@ -60,13 +79,19 @@ public class PolicySwiper implements MiniGame {
     public int getRejectedCount() { return rejectedCount; }
 
     @Override
+    public double getDesignWidth() { return 1920.0; }
+
+    @Override
+    public double getDesignHeight() { return 1080.0; }
+
+    @Override
     public void update(double dt) {
         if (!swiping) return;
 
-        swipeProgress += 3.0 * dt; // full swipe-out animation takes ~1/3 second
-        double eased = swipeProgress * (2 - swipeProgress); // ease-out, starts fast then settles
+        swipeProgress += 3.0 * dt;
+        double eased = swipeProgress * (2 - swipeProgress);
 
-        cardOffsetX = swipeDirection * eased * 900;
+        cardOffsetX = swipeDirection * eased * 1400;
         cardRotation = swipeDirection * eased * 20;
         cardAlpha = Math.max(0, 1 - swipeProgress);
 
@@ -81,9 +106,6 @@ public class PolicySwiper implements MiniGame {
         return finished;
     }
 
-    // Best possible play (accept every positive policy, reject every negative one)
-    // nets the sum of |approvalEffect| across all cards; worst possible play is the
-    // mirror of that. Use those as the HIGH/LOW cutoffs.
     @Override
     public String getResultTier() {
         int bestPossible = policies.stream().mapToInt(p -> Math.abs(p.approvalEffect())).sum();
@@ -102,7 +124,7 @@ public class PolicySwiper implements MiniGame {
     }
 
     private void startSwipe(int direction) {
-        if (swiping) return; // ignore input mid-animation
+        if (swiping) return;
         swiping = true;
         swipeDirection = direction;
         swipeProgress = 0;
@@ -122,60 +144,114 @@ public class PolicySwiper implements MiniGame {
 
     @Override
     public void draw(GraphicsContext gc) {
-        // header
-        gc.setFill(Color.WHITE);
-        gc.setTextAlign(TextAlignment.LEFT);
-        gc.setTextBaseline(VPos.TOP);
-        gc.setFont(Font.font(18));
-        gc.fillText("Policy Swiper", 20, 20);
-        gc.fillText("Rejected: " + rejectedCount + "   Accepted: " + acceptedCount, 20, 45);
-        gc.fillText("<- Reject        Accept ->", 20, 70);
+        double w = getDesignWidth();
 
-        // --- card --- all design with assistance for now
+        gc.setFill(Color.web(BG_COLOR));
+        gc.fillRect(0, 0, w, getDesignHeight());
+
+        drawHeader(gc, w);
+        drawApprovalMeter(gc, w);
+        drawCard(gc);
+        drawButtons(gc);
+    }
+
+    private void drawHeader(GraphicsContext gc, double w) {
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setTextBaseline(VPos.TOP);
+
+        gc.setFill(Color.web(ACCENT_GREEN));
+        gc.setFont(titleFont(54));
+        gc.fillText("POLICY SWIPER", w / 2.0, 40);
+
+        gc.setFill(Color.web(ACCENT_GREEN_DIM));
+        gc.setFont(bodyFont(26));
+        gc.fillText("\u2190 REJECT          ACCEPT \u2192", w / 2.0, 108);
+
+        // card progress + tally, top corners like an in-world HUD
+        gc.setTextAlign(TextAlignment.LEFT);
+        gc.setFill(Color.web(ACCENT_RED_DIM));
+        gc.fillText("REJECTED: " + rejectedCount, 60, 40);
+
+        gc.setTextAlign(TextAlignment.RIGHT);
+        gc.setFill(Color.web(ACCENT_GREEN_DIM));
+        gc.fillText("ACCEPTED: " + acceptedCount, w - 60, 40);
+
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFill(Color.web(ACCENT_GREEN_DIM));
+        gc.setFont(bodyFont(20));
+        gc.fillText("BILL " + (currentIndex + 1) + " / " + policies.size(), w / 2.0, 150);
+    }
+
+    // small bar showing where public opinion currently sits, purely for feedback --
+    // keeps the exact per-policy numbers hidden so the swiper stays a gut-call, not a spreadsheet.
+    private void drawApprovalMeter(GraphicsContext gc, double w) {
+        int worst = policies.stream().mapToInt(p -> Math.abs(p.approvalEffect())).sum();
+        double meterW = 500, meterH = 18;
+        double meterX = w / 2.0 - meterW / 2.0, meterY = 178;
+
+        gc.setFill(Color.web("#000000", 0.55));
+        gc.fillRoundRect(meterX, meterY, meterW, meterH, 10, 10);
+
+        double clamped = Math.max(-worst, Math.min(worst, publicOpinion));
+        double fillFrac = (clamped + worst) / (2.0 * worst); // 0..1, 0.5 = neutral
+        gc.setFill(Color.web(clamped >= 0 ? ACCENT_GREEN : ACCENT_RED));
+        gc.fillRoundRect(meterX, meterY, meterW * fillFrac, meterH, 10, 10);
+
+        gc.setStroke(Color.web(ACCENT_GREEN_DIM));
+        gc.setLineWidth(2);
+        gc.strokeRoundRect(meterX, meterY, meterW, meterH, 10, 10);
+    }
+
+    private void drawCard(GraphicsContext gc) {
         gc.save();
         gc.setGlobalAlpha(cardAlpha);
         gc.translate(CARD_CENTER_X + cardOffsetX, CARD_CENTER_Y);
         gc.rotate(cardRotation);
 
-        gc.setFill(Color.web("#f5e6c8"));
-        gc.fillRoundRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 20, 20);
-        gc.setStroke(Color.web("#8a6d3b"));
-        gc.setLineWidth(3);
-        gc.strokeRoundRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 20, 20);
+        gc.setFill(Color.web(PANEL_BG));
+        gc.fillRoundRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 28, 28);
 
-        gc.setFill(Color.BLACK);
+        gc.setStroke(Color.web(ACCENT_GREEN));
+        gc.setLineWidth(4);
+        gc.strokeRoundRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 28, 28);
+
+        gc.setFill(Color.WHITE);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
-        Font cardFont = Font.font(20);
+        Font cardFont = bodyFont(34);
         gc.setFont(cardFont);
 
-        List<String> lines = wrapText(policies.get(currentIndex).policy, cardFont, CARD_WIDTH - 40);
-        double lineHeight = 26;
+        List<String> lines = wrapText(policies.get(currentIndex).policy(), cardFont, CARD_WIDTH - 100);
+        double lineHeight = 44;
         double startY = -((lines.size() - 1) * lineHeight) / 2.0;
         for (int i = 0; i < lines.size(); i++) {
             gc.fillText(lines.get(i), 0, startY + i * lineHeight);
         }
         gc.restore();
+    }
 
-        // --- buttons (visual reference for what each arrow key does) ---
+    private void drawButtons(GraphicsContext gc) {
         gc.setGlobalAlpha(1.0);
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
-        gc.setFont(Font.font(28));
+        gc.setFont(titleFont(46));
 
-        gc.setFill(Color.web("#c0392b"));
+        gc.setFill(Color.web("#1a0000"));
         gc.fillOval(X_BUTTON_X - BUTTON_RADIUS, X_BUTTON_Y - BUTTON_RADIUS, BUTTON_RADIUS * 2, BUTTON_RADIUS * 2);
-        gc.setFill(Color.WHITE);
-        gc.fillText("X", X_BUTTON_X, X_BUTTON_Y);
+        gc.setStroke(Color.web(ACCENT_RED));
+        gc.setLineWidth(4);
+        gc.strokeOval(X_BUTTON_X - BUTTON_RADIUS, X_BUTTON_Y - BUTTON_RADIUS, BUTTON_RADIUS * 2, BUTTON_RADIUS * 2);
+        gc.setFill(Color.web(ACCENT_RED));
+        gc.fillText("X", X_BUTTON_X, X_BUTTON_Y + 4);
 
-        gc.setFill(Color.web("#27ae60"));
+        gc.setFill(Color.web("#001a08"));
         gc.fillOval(CHECK_BUTTON_X - BUTTON_RADIUS, CHECK_BUTTON_Y - BUTTON_RADIUS, BUTTON_RADIUS * 2, BUTTON_RADIUS * 2);
-        gc.setFill(Color.WHITE);
-        gc.fillText("\u2713", CHECK_BUTTON_X, CHECK_BUTTON_Y);
-
+        gc.setStroke(Color.web(ACCENT_GREEN));
+        gc.setLineWidth(4);
+        gc.strokeOval(CHECK_BUTTON_X - BUTTON_RADIUS, CHECK_BUTTON_Y - BUTTON_RADIUS, BUTTON_RADIUS * 2, BUTTON_RADIUS * 2);
+        gc.setFill(Color.web(ACCENT_GREEN));
+        gc.fillText("\u2713", CHECK_BUTTON_X, CHECK_BUTTON_Y + 4);
     }
-
-
 
     /** Splits text into lines that fit within maxWidth, using the given font for measurement. */
     private List<String> wrapText(String text, Font font, double maxWidth) {
