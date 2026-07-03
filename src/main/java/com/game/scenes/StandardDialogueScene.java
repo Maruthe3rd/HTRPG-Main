@@ -7,6 +7,7 @@ import com.game.core.ScenePayload;
 import com.game.dialogue.DialogueChoice;
 import com.game.dialogue.DialogueNode;
 import com.game.dialogue.DialogueTemplate;
+import com.game.state.DatabaseManager;
 import com.game.ui.DialogueView;
 import javafx.scene.Parent;
 
@@ -88,8 +89,7 @@ public class StandardDialogueScene extends ModularScene {
         currentNodeId = nodeId;
 
         if (node.getTriggerAction() != null) {
-            String param = node.getActionParameter();
-            System.out.println("Trigger action: " + node.getTriggerAction() + (param != null ? " (" + param + ")" : ""));
+            handleTrigger(node.getTriggerAction(), node.getActionParameter());
         }
 
         if (node.getBackgroundPath() != null) {
@@ -132,4 +132,32 @@ public class StandardDialogueScene extends ModularScene {
             showNode(choice.getTargetNodeId());
         }
     }
+
+    private void handleTrigger(String action, String param) {
+
+        DatabaseManager db = DatabaseManager.getInstance();
+
+        switch (action) {
+
+            case "SET_FLAG_AND_END":
+
+                // 1. Flag speichern
+                if (param != null) {
+                    db.setMetaFlag(param, true);
+                }
+
+                // 2. aktueller Charakter
+                String current = payload.activeHeroId();
+
+                // 3. Run speichern
+                db.savePlaythrough(current, "BAD_END");
+
+                // 4. Zurück zur Character Selection, damit ein neuer Run gestartet werden kann.
+                ScenePayload charCreatorPayload = new ScenePayload("CHAR_CREATOR", "unassigned");
+                SceneDirector.switchScene(new CharCreatorScene(), charCreatorPayload);
+
+                break;
+        }
+    }
+
 }

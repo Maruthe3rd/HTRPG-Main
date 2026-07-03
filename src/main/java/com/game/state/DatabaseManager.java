@@ -187,9 +187,88 @@ public final class DatabaseManager {
         }
     }
 
+    public void setMetaFlag(String key, boolean value) {
+        String sql = """
+        INSERT INTO meta_timeline_flags(flag_key, flag_value)
+        VALUES(?, ?)
+        ON CONFLICT(flag_key)
+        DO UPDATE SET flag_value = excluded.flag_value;
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, key);
+            ps.setBoolean(2, value);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void savePlaythrough(String character, String endType) {
+        String sql = """
+        INSERT INTO playthrough_history(character_name, play_order, achieved_end, run_completed)
+        VALUES(?, 0, ?, 1)
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, character);
+            ps.setString(2, endType);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean hasMetaFlag(String key) {
+        String sql = "SELECT flag_value FROM meta_timeline_flags WHERE flag_key = ?";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, key);
+            ResultSet rs = ps.executeQuery();
+            return rs.next() && rs.getBoolean(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getMetaFlag(String key) {
+        String sql = "SELECT flag_value FROM meta_timeline_flags WHERE flag_key = ?";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, key);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) return rs.getString(1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
     public static final class DatabaseInitializationException extends RuntimeException {
         public DatabaseInitializationException(String message, Throwable cause) {
             super(message, cause);
         }
+    }
+
+    public String selectNextCharacter(String current) {
+        String sql = """
+        SELECT character_id
+        FROM character_weights
+        ORDER BY weight DESC
+        LIMIT 1
+    """;
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) return rs.getString(1);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 }

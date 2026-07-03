@@ -93,6 +93,7 @@
       "backgroundPath": "/images/street_riot.jpg",
       "triggerAction": "SET_FLAG_AND_END",
       "actionParameter": "METAKEY_DRAGONBORN_DEAD",
+      "end": true,
       "choices": []
     },
     "NODE_BROTHER_CONFRONTATION": {

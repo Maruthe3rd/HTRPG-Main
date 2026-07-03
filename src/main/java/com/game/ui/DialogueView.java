@@ -121,6 +121,8 @@ public class DialogueView extends StackPane {
     private List<ChoiceOption> choices = new ArrayList<>();
     private int selectedChoiceIndex = 0;
 
+    private boolean end;
+
     public DialogueView() {
         setStyle("-fx-background-color: #101010;");
         setFocusTraversable(true);
@@ -370,12 +372,14 @@ public class DialogueView extends StackPane {
             choiceTextNode.setFill(Color.web(ACCENT_GREEN));
             choiceIndexLabel.setTextFill(Color.web(ACCENT_GREEN));
             choiceBox.setCursor(javafx.scene.Cursor.HAND);
-        } else {
+        }
+        /*else {
             choiceTextNode.setText("[LOCKED] " + current.getText());
             choiceTextNode.setFill(Color.web("#777777"));
             choiceIndexLabel.setTextFill(Color.web("#777777"));
             choiceBox.setCursor(javafx.scene.Cursor.DEFAULT);
         }
+        */
 
         refreshChoiceBoxStyle(false);
     }
@@ -388,5 +392,13 @@ public class DialogueView extends StackPane {
         } else {
             choiceBox.setStyle(hovering ? CHOICE_BOX_STYLE_HOVER : CHOICE_BOX_STYLE);
         }
+    }
+
+    public boolean isEnd() {
+        return end;
+    }
+
+    public void setEnd(boolean end) {
+        this.end = end;
     }
 }
