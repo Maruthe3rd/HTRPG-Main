@@ -159,8 +159,8 @@ public class CharCreatorScene extends ModularScene {
             StackPane portraitStack = portraitStacks.get(i);
 
             ScaleTransition st = new ScaleTransition(Duration.millis(150), portraitStack);
-            st.setToX(isSelected ? 1.25 : 1.0);
-            st.setToY(isSelected ? 1.25 : 1.0);
+            st.setToX(isSelected ? 1.15 : 1.0);
+            st.setToY(isSelected ? 1.15 : 1.0);
             st.play();
 
             Label label = (Label) ((VBox) cards.get(i).getChildren().get(0)).getChildren().get(1);
