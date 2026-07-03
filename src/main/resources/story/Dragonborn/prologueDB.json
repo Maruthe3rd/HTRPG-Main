@@ -14,7 +14,7 @@
         },
         {
           "title": "Freundlich",
-          "text": "Ich werde mein bestes geben.",
+          "text": "Ich werde mein Bestes geben.",
           "targetNodeId": "NODE_ROUTE_FRIENDLY"
         },
         {
@@ -38,7 +38,7 @@
     },
     "NODE_ROUTE_FRIENDLY": {
       "speaker": "Bruder",
-      "text": "Das soltest du auch. Dein bestes wird dringend nötig sein",
+      "text": "Das solltest du auch. Dein Bestes wird dringend nötig sein.",
       "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
@@ -50,7 +50,7 @@
     },
     "NODE_ROUTE_UNSURE": {
       "speaker": "Bruder",
-      "text": "Wenn du jetzt schon so unsicher bist, wie wird es dann wärend der Zeremonie? Reiß dich doch einfach zusammen und bring unseren Familiennamen nicht in Verruf.",
+      "text": "Wenn du jetzt schon so unsicher bist, wie wird es dann während der Zeremonie? Reiß dich doch einfach zusammen und bring unseren Familiennamen nicht in Verruf.",
       "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
@@ -73,7 +73,7 @@
     },
     "NODE_OPPOSITION_VOICE": {
       "speaker": "Unbekannte Stimme aus der Menge",
-      "text": "Nicht schon wieder ein solcher Schuppenschuft! Nur Gott weiß wann dieses System endlich ein Ende findet.",
+      "text": "Nicht schon wieder ein solcher Schuppenschuft! Nur Gott weiß, wann dieses System endlich ein Ende findet.",
       "backgroundPath": "/images/throne_hall.jpg",
       "choices": [
         {
@@ -88,7 +88,7 @@
     },
     "NODE_CROWD_EMBARRASSMENT": {
       "speaker": "THE VOICE",
-      "text": "Deine Worte sitzen nicht und du stotterst verzweifelt. Ein Raunen geht durch die Menge, diesmal aus Lachern. Die öffentliche Meinung belächelt dich nun. Trotzdessen wirst du eingeladen, der Tradition des goldenen Regens nachzugehen.",
+      "text": "Deine Worte sitzen nicht und du stotterst verzweifelt. Ein Raunen geht durch die Menge, diesmal aus Lachern. Die öffentliche Meinung belächelt dich nun. Trotzdem wirst du eingeladen, der Tradition des goldenen Regens nachzugehen.",
       "backgroundPath": "/images/throne_hall.jpg",
       "triggerAction": "SET_FLAG_crowdsLaughingstock",
       "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE",
@@ -112,7 +112,7 @@
     },
     "NODE_PUBLIC_OPINION_NEUTRAL": {
       "speaker": "THE VOICE",
-      "text": "Du sagst nichts. Die Stimmen gehen langsam im Jubel verloren. Trotzdessen wirst du eingeladen, der Tradition des goldenen Regens nachzugehen.",
+      "text": "Du sagst nichts. Die Stimmen gehen langsam im Jubel verloren. Trotzdem wirst du eingeladen, der Tradition des goldenen Regens nachzugehen.",
       "backgroundPath": "/images/throne_hall.jpg",
       "choices": [
         {

@@ -43,7 +43,7 @@
     },
     "NODE_BROTHER_BUSINESS_TALK": {
       "speaker": "Bruder",
-      "text": "Nebenbei, ich habe heute Nacht noch etwas zu erledigen. Ein paar meiner Männer statten diesem stur köpfigen Zwergenschmied in der Unterstadt einen Besuch ab - der Kerl weigert sich seit Wochen, seinen 'Beitrag' zu leisten. Wird Zeit, dass ihm jemand erklärt, wie das hier läuft.",
+      "text": "Nebenbei, ich habe heute Nacht noch etwas zu erledigen. Ein paar meiner Männer statten diesem sturköpfigen Zwergenschmied in der Unterstadt einen Besuch ab - der Kerl weigert sich seit Wochen, seinen 'Beitrag' zu leisten. Wird Zeit, dass ihm jemand erklärt, wie das hier läuft.",
       "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
@@ -58,7 +58,7 @@
     },
     "NODE_PRESS_1": {
       "speaker": "Bruder",
-      "text": "Das ist nichts, worüber du dir den Kopf zerbrechen musst. Kümmere dich um deine eigenen Angelegenheiten.'",
+      "text": "Das ist nichts, worüber du dir den Kopf zerbrechen musst. Kümmere dich um deine eigenen Angelegenheiten.",
       "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {

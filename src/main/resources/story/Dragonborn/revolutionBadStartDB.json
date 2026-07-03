@@ -1,21 +1,14 @@
 {
   "sceneId": "FAILED_REVOLUTION_DRAGONBORN",
-  "startNodeId": "NODE_FAILED_REVOLUTION_START",
+  "startNodeId": "NODE_BAD_REVOLUTION_START",
   "nodes": {
-    "NODE_REVOLUTION_START": {
-      "speaker": "Menschenmasse",
-      "text": "Nieder mit dem Adel!",
+    "NODE_BAD_REVOLUTION_START": {
+      "speaker": "THE VOICE",
+      "text": "Aufgrund deiner Entscheidungen hast du nicht Überlebt. Du und deine gesamte Familie sind nun Geschichte, bis diese überschrieben wird.",
       "backgroundPath": "/images/council_chamber.jpg",
-      "choices": [
-        {
-          "text": "Aufgrund deiner Entscheidungen hast du nicht Überlebt. Du und deine gesammte Familie sind nun Geschichte, bis diese überschrieben wird.",
-          "targetNodeId": "NODE_FAMILY_START",
-          "backgroundPath": "/images/council_chamber.jpg",
-          "triggerAction": "SET_FLAG_AND_END",
-          "actionParameter": "METAKEY_DRAGONBORN_DEAD",
-          "choices": []
-        }
-      ]
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_DRAGONBORN_DEAD",
+      "choices": []
     }
   }
 }

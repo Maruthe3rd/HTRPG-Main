@@ -76,7 +76,7 @@
     },
     "NODE_REVOLUTIONARIES_LEFT": {
       "speaker": "THE VOICE",
-      "text": "Eine beachtliche, verbissene Gruppe hält weiter an der Idee einer Revolution fest, jedoch nicht alle, diese sind zu erschöpft oder zu ungewiss, ob sich der Kampf noch lohnt",
+      "text": "Eine beachtliche, verbissene Gruppe hält weiter an der Idee einer Revolution fest, jedoch nicht alle, diese sind zu erschöpft oder zu ungewiss, ob sich der Kampf noch lohnt.",
       "backgroundPath": "/images/throne_hall.jpg",
       "triggerAction": "SET_FLAG_RevolutionariesLeft",
       "choices": [

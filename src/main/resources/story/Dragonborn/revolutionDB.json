@@ -4,7 +4,7 @@
   "nodes": {
     "NODE_REVOLUTION_START": {
       "speaker": "THE VOICE",
-      "text": "Aufgrund deiner Entscheidungen hast du Überlebt. Jedoch, als einziger deiner Familie...",
+      "text": "Aufgrund deiner Entscheidungen hast du Überlebt. Jedoch, als Einziger deiner Familie...",
       "backgroundPath": "/images/council_chamber.jpg",
       "triggerAction": "SET_FLAG_AND_END",
       "actionParameter": "METAKEY_DRAGONBORN_GOOD_END",

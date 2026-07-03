@@ -4,7 +4,7 @@
   "nodes": {
     "NODE_FAILED_REVOLUTION_START": {
       "speaker": "THE VOICE",
-      "text": "Aufgrund deiner Entscheidungen hast du Überlebt. Jedoch hast du Gerüchte gehört, dass ein bestimmter Zwerg dir sein Helfer während der chaotischen Revolution verstarb.",
+      "text": "Aufgrund deiner Entscheidungen hast du Überlebt. Jedoch hast du Gerüchte gehört, dass ein bestimmter Zwerg und sein Helfer während der chaotischen Revolution verstarb.",
       "backgroundPath": "/images/council_chamber.jpg",
       "triggerAction": "SET_FLAG_AND_END",
       "actionParameter": "METAKEY_DRAGONBORN_DEAD",

@@ -72,7 +72,7 @@
     },
     "NODE_RAID_AFTERMATH": {
       "speaker": "THE VOICE",
-      "text": "Die Werkstatt ist geschwächt, aber noch nicht tot und es klingt sinvoll endlich einen Helfer einzustellen",
+      "text": "Die Werkstatt ist geschwächt, aber noch nicht tot und es klingt sinnvoll, endlich einen Helfer einzustellen",
       "backgroundPath": "/images/smithy_interior.jpg",
       "choices": [
         {
