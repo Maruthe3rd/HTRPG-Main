@@ -173,9 +173,16 @@ public class CharCreatorScene extends ModularScene {
         System.out.println("Race selected: " + chosenRace);
         payload = payload.withMetadata("SELECTED_RACE", chosenRace);
 
-        if ("dragonborn".equals(chosenRace)) {
+        String storyFile = switch (chosenRace) {
+            case "dragonborn" -> "/story/Dragonborn/prologueDB.json";
+            case "dwarf" -> "/story/Dwarf/prologueDwarf.json";
+            case "furry" -> "/story/Furry/prologueFurry.json";
+            default -> null;
+        };
+
+        if (storyFile != null) {
             ScenePayload dialoguePayload = new ScenePayload("DIALOGUE_SCENE", payload.activeHeroId())
-                    .withMetadata("STORY_FILE", "/story/prologueDB.json");
+                    .withMetadata("STORY_FILE", storyFile);
             SceneDirector.switchScene(new StandardDialogueScene(masterViewport), dialoguePayload);
         } else {
             System.out.println("No story file wired up for '" + chosenRace + "' yet.");

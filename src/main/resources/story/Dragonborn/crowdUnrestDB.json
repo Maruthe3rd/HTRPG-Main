@@ -1,0 +1,123 @@
+{
+  "sceneId": "UNREST_DRAGONBORN",
+  "startNodeId": "NODE_UNREST_START",
+  "nodes": {
+    "NODE_UNREST_START": {
+      "speaker": "THE VOICE",
+      "text": "Vor dem Anwesen hat sich eine Menge versammelt. Ein Mönch steht auf einer umgedrehten Kiste und wettert gegen den Adel, gegen dich, gegen alles, was mit Schuppen geboren wurde. Die Menge wird lauter, unruhiger. Irgendwo fliegt bereits ein Stein.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_witnessedUnrest",
+      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE",
+      "choices": [
+        {
+          "text": "Was tust du?",
+          "targetNodeId": "NODE_STEP_IN"
+        }
+      ]
+    },
+    "NODE_STEP_IN": {
+      "speaker": "Bruder",
+      "text": "Willst du dich mit sowas wirklich abgeben? Solche Drecksarbeit ist Sache der Wachen, nicht unsere.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "choices": [
+        {
+          "text": "Selbst eingreifen und die Lage beruhigen",
+          "targetNodeId": "NODE_FIGHT_START"
+        },
+        {
+          "text": "Die Wachen rufen",
+          "targetNodeId": "NODE_CALL_GUARDS"
+        },
+        {
+          "text": "So tun, als hättest du nichts gesehen",
+          "targetNodeId": "NODE_PRETEND"
+        }
+      ]
+    },
+    "NODE_CALL_GUARDS": {
+      "speaker": "THE VOICE",
+      "text": "Du schickst einen Diener los, die Wachen zu holen. Sie treffen erst ein, als die Menge sich bereits zerstreut hat - zu spät, um noch irgendetwas zu ändern, außer dem Eindruck, den die Leute von dir mitnehmen.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_PUBLIC_WHIMP"
+        }
+      ]
+    },
+    "NODE_PRETEND": {
+      "speaker": "THE VOICE",
+      "text": "Du ziehst dich vom Fenster zurück und lässt den Vorhang fallen. Was draußen passiert, ist nicht dein Problem - sagst du dir zumindest. Der Lärm verstummt irgendwann von selbst.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_PUBLIC_WHIMP"
+        }
+      ]
+    },
+    "NODE_PUBLIC_WHIMP": {
+      "speaker": "THE VOICE",
+      "text": "In den Tagen danach macht die Geschichte die Runde: der neue Herzog, der sich versteckt hat, während sein eigenes Volk vor seiner Tür randalierte. Dein Ansehen sinkt weiter, aber wenigstens bist du unversehrt.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "triggerAction": "SET_FLAG_dragonbornSeenAsCoward",
+      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE",
+      "choices": [
+        {
+          "text": "Zur Politik übergehen",
+          "targetNodeId": "NODE_POLITICS_START",
+          "targetStoryFile": "/story/politicsDB.json"
+        }
+      ]
+    },
+    "NODE_FIGHT_START": {
+      "speaker": "THE VOICE",
+      "text": "Du gehst selbst hinaus, ohne Wachen, nur mit dir. Die Menge dreht sich zu dir um. Der Mönch springt von seiner Kiste und kommt dir entgegen, ein Stein schon in der Hand.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "choices": [
+        {
+          "text": "Ruhig und mit erhobenen Händen auf ihn zugehen",
+          "targetNodeId": "NODE_FIGHT_WON"
+        },
+        {
+          "text": "Dich frontal auf ihn stürzen, bevor er werfen kann",
+          "targetNodeId": "NODE_FIGHT_LOST_DEAD"
+        }
+      ]
+    },
+    "NODE_FIGHT_WON": {
+      "speaker": "THE VOICE",
+      "text": "Du bleibst ruhig, lässt deine Klauen sichtbar, aber gesenkt. Der Mönch zögert - und in diesem Zögern kippt die Menge. Ein paar Zwerge aus der vorderen Reihe reißen ihm den Stein aus der Hand. Die Unruhe bricht in sich zusammen.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_dragonbornWonFight",
+      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_DWARVES_REACTION"
+        }
+      ]
+    },
+    "NODE_FIGHT_LOST_DEAD": {
+      "speaker": "THE VOICE",
+      "text": "Der Stein trifft dich an der Schläfe, bevor du überhaupt nah genug bist. Du gehst zu Boden, und die Menge, die eben noch zögerte, wird zum Mob. Es ist das letzte, was du je siehst.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_DRAGONBORN_DEAD",
+      "choices": []
+    },
+    "NODE_DWARVES_REACTION": {
+      "speaker": "THE VOICE",
+      "text": "In den Tagen danach hörst du, wie die Zwerge in der Unterstadt von dir sprechen - nicht unfreundlich. Dein Bruder dagegen spricht kaum noch mit dir. Er hätte lieber gesehen, dass du dich heraushältst.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "triggerAction": "SET_FLAG_dwarvesApproveBrotherResents",
+      "choices": [
+        {
+          "text": "Weiter zur Politik",
+          "targetNodeId": "NODE_POLITICS_START",
+          "targetStoryFile": "/story/politicsDB.json"
+        }
+      ]
+    }
+  }
+}

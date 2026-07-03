@@ -1,0 +1,85 @@
+{
+  "sceneId": "PROLOGUE_DWARF",
+  "startNodeId": "NODE_START",
+  "nodes": {
+    "NODE_START": {
+      "speaker": "Vater",
+      "text": "Der Hammer lügt nicht, Junge. Entweder du triffst den Takt, oder das Metall wird es dir übel nehmen.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "title": "Ehrgeizig",
+          "text": "Ich werde der beste Schmied der Unterstadt.",
+          "targetNodeId": "NODE_ROUTE_AMBITIOUS"
+        },
+        {
+          "title": "Bescheiden",
+          "text": "Ich will einfach nur etwas können, das mir gehört.",
+          "targetNodeId": "NODE_ROUTE_HUMBLE"
+        },
+        {
+          "title": "Zweifelnd",
+          "text": "Was, wenn ich einfach nicht dafür gemacht bin?",
+          "targetNodeId": "NODE_ROUTE_DOUBT"
+        }
+      ]
+    },
+    "NODE_ROUTE_AMBITIOUS": {
+      "speaker": "Vater",
+      "text": "Ehrgeiz zerbricht schneller als schlecht gehärteter Stahl. Aber gut - zeig mir, was du kannst.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_FIRST_BLADE"
+        }
+      ]
+    },
+    "NODE_ROUTE_HUMBLE": {
+      "speaker": "Vater",
+      "text": "Bescheidenheit ist mehr wert als jede Klinge, die du je schmieden wirst. Also gut.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_FIRST_BLADE"
+        }
+      ]
+    },
+    "NODE_ROUTE_DOUBT": {
+      "speaker": "Vater",
+      "text": "Zweifel hat noch keinem Zwerg geschadet, solange er die Hände nicht davon abhält, weiterzuarbeiten.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_FIRST_BLADE"
+        }
+      ]
+    },
+    "NODE_FIRST_BLADE": {
+      "speaker": "THE VOICE",
+      "text": "Jahre vergehen zwischen Amboss und Asche. Irgendwann hältst du deine erste eigene Klinge in Händen - und dein Vater übergibt dir, nicht ohne Zögern, die Schlüssel zur Werkstatt.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfInheritedWorkshop",
+      "choices": [
+        {
+          "text": "Die Werkstatt übernehmen",
+          "targetNodeId": "NODE_WORKSHOP_LIFE"
+        }
+      ]
+    },
+    "NODE_WORKSHOP_LIFE": {
+      "speaker": "THE VOICE",
+      "text": "Die Unterstadt ist kein leichter Ort für ein eigenes Geschäft, aber du kommst zurecht - Kundschaft kommt und geht, Rechnungen auch. Bis eines Abends die Arbeit sich länger hinzieht als geplant, und du das letzte Licht viel zu spät löschst.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_RAID_START",
+          "targetStoryFile": "/story/Dwarf/smithyRaidDwarf.json"
+        }
+      ]
+    }
+  }
+}

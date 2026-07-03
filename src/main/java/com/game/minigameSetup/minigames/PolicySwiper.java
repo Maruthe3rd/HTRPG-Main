@@ -81,6 +81,17 @@ public class PolicySwiper implements MiniGame {
         return finished;
     }
 
+    // Best possible play (accept every positive policy, reject every negative one)
+    // nets the sum of |approvalEffect| across all cards; worst possible play is the
+    // mirror of that. Use those as the HIGH/LOW cutoffs.
+    @Override
+    public String getResultTier() {
+        int bestPossible = policies.stream().mapToInt(p -> Math.abs(p.approvalEffect())).sum();
+        if (publicOpinion >= bestPossible * 0.6) return "HIGH";
+        if (publicOpinion >= 0) return "MEDIUM";
+        return "LOW";
+    }
+
     private void advanceCard() {
         currentIndex = (currentIndex + 1) % policies.size();
         cardOffsetX = 0;

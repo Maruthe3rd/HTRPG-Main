@@ -10,4 +10,9 @@ public interface MiniGame {
     default void onKeyRelease(KeyEvent e) {}
 
     default boolean isFinished() { return false; }
+
+    default String getResultTier() { return null; }
+
+    default double getDesignWidth() { return 800.0; }
+    default double getDesignHeight() { return 600.0; }
 }

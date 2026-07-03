@@ -1,0 +1,79 @@
+{
+  "sceneId": "POLITICS_DRAGONBORN",
+  "startNodeId": "NODE_POLITICS_START",
+  "nodes": {
+    "NODE_POLITICS_START": {
+      "speaker": "Kanzler",
+      "text": "Euer Vater erwartet, dass Ihr Euch mit den Handelsabkommen vertraut macht. Zölle, Steuern, Löhne - jede Entscheidung, die Ihr trefft, wird morgen auf der Straße diskutiert. Nach dem, was gestern passiert ist, könnte es sein, dass die Menge genau zusieht.",
+      "backgroundPath": "/images/council_chamber.jpg",
+      "choices": [
+        {
+          "text": "In die Ratssitzung gehen und über die vorgeschlagenen Gesetze entscheiden",
+          "minigameId": "POLICY_SWIPER",
+          "targetNodeId": "NODE_POLITICS_DEBRIEF",
+          "targetNodeIdHigh": "NODE_RESULT_EXTRAORDINARY",
+          "targetNodeIdMedium": "NODE_RESULT_PASSED",
+          "targetNodeIdLow": "NODE_RESULT_LOST"
+        }
+      ]
+    },
+    "NODE_POLITICS_DEBRIEF": {
+      "speaker": "THE VOICE",
+      "text": "(Kein eindeutiges Ergebnis erhalten.)",
+      "backgroundPath": "/images/council_chamber.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_RESULT_PASSED"
+        }
+      ]
+    },
+    "NODE_RESULT_EXTRAORDINARY": {
+      "speaker": "Kanzler",
+      "text": "Das... war unerwartet gut. Eure Entscheidungen treffen genau den Nerv der einfachen Leute, ohne den Adel völlig zu verprellen. Als die Neuigkeiten die Straßen erreichen, wird aus Misstrauen so etwas wie vorsichtige Zustimmung.",
+      "backgroundPath": "/images/council_chamber.jpg",
+      "triggerAction": "SET_FLAG_dragonbornPoliticsExtraordinary",
+      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_CROWD_EASED"
+        }
+      ]
+    },
+    "NODE_RESULT_PASSED": {
+      "speaker": "Kanzler",
+      "text": "Solide Arbeit, auch wenn nicht jede Entscheidung allen gefallen hat. Die Straßen beruhigen sich, aber nur langsam - die Stimmen, die zur Rebellion aufrufen, verlieren an diesem Tag zumindest ein paar Anhänger.",
+      "backgroundPath": "/images/council_chamber.jpg",
+      "triggerAction": "SET_FLAG_dragonbornPoliticsPassed",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_FEW_REVOLUTIONARIES_LEFT"
+        }
+      ]
+    },
+    "NODE_RESULT_LOST": {
+      "speaker": "THE VOICE",
+      "text": "Eure Entscheidungen treffen mehrfach genau die falschen Leute zur falschen Zeit. Als Ihr die Kammer verlasst, wartet die Menge bereits vor dem Tor. Ein Schuss aus der Menge - und noch bevor die Wachen reagieren können, ist alles vorbei.",
+      "backgroundPath": "/images/council_chamber.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_DRAGONBORN_DEAD",
+      "choices": []
+    },
+    "NODE_CROWD_EASED": {
+      "speaker": "THE VOICE",
+      "text": "Die Wut, die noch vor Tagen die Straßen füllte, verraucht Stück für Stück. Es wird noch lange dauern, bis man dir wirklich vertraut, aber die Menge ist beruhigt, und dein Name fällt nicht mehr nur im Zorn.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "triggerAction": "SET_FLAG_crowdEased",
+      "choices": []
+    },
+    "NODE_FEW_REVOLUTIONARIES_LEFT": {
+      "speaker": "THE VOICE",
+      "text": "Nur noch eine kleine, verbissene Gruppe hält weiter an der Idee einer Revolution fest. Die meisten anderen sind zu erschöpft oder zu ungewiss, ob sich der Kampf noch lohnt - der Rest deiner Geschichte wird zeigen, ob das reicht.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "triggerAction": "SET_FLAG_fewRevolutionariesLeft",
+      "choices": []
+    }
+  }
+}

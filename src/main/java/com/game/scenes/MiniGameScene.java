@@ -28,6 +28,9 @@ public class MiniGameScene extends ModularScene {
 
     private String returnStoryFile;
     private String returnNodeId;
+    private String returnNodeIdHigh;
+    private String returnNodeIdMedium;
+    private String returnNodeIdLow;
 
     public MiniGameScene(StackPane masterViewport) {
         super(masterViewport);
@@ -38,6 +41,9 @@ public class MiniGameScene extends ModularScene {
         String minigameId = payload.metadata("MINIGAME_ID", String.class);
         returnStoryFile = payload.metadata("RETURN_STORY_FILE", String.class);
         returnNodeId = payload.metadata("RETURN_NODE_ID", String.class);
+        returnNodeIdHigh = payload.metadata("RETURN_NODE_ID_HIGH", String.class);
+        returnNodeIdMedium = payload.metadata("RETURN_NODE_ID_MEDIUM", String.class);
+        returnNodeIdLow = payload.metadata("RETURN_NODE_ID_LOW", String.class);
 
         canvas = new Canvas(1920, 1080);
         activeGame = createMiniGame(minigameId);
@@ -101,9 +107,23 @@ public class MiniGameScene extends ModularScene {
     }
 
     private void returnToDialogue() {
+        String resolvedNodeId = returnNodeId;
+        String tier = activeGame.getResultTier();
+        if (tier != null) {
+            String tiered = switch (tier) {
+                case "HIGH" -> returnNodeIdHigh;
+                case "MEDIUM" -> returnNodeIdMedium;
+                case "LOW" -> returnNodeIdLow;
+                default -> null;
+            };
+            if (tiered != null) {
+                resolvedNodeId = tiered;
+            }
+        }
+
         ScenePayload dialoguePayload = new ScenePayload("DIALOGUE", payload.activeHeroId())
                 .withMetadata("STORY_FILE", returnStoryFile)
-                .withMetadata("START_NODE", returnNodeId);
+                .withMetadata("START_NODE", resolvedNodeId);
         SceneDirector.switchScene(new StandardDialogueScene(masterViewport), dialoguePayload);
     }
 

@@ -50,7 +50,7 @@
     },
     "NODE_ROUTE_UNSURE": {
       "speaker": "Bruder",
-      "text": "Wenn du jetzt schon so unsicher bist, wie wird es dann wärend der Zeremonie? Reiß dich doch einfach zusammen und bring unseren Familiennamen nicht in Verruf. ",
+      "text": "Wenn du jetzt schon so unsicher bist, wie wird es dann wärend der Zeremonie? Reiß dich doch einfach zusammen und bring unseren Familiennamen nicht in Verruf.",
       "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
@@ -88,24 +88,23 @@
     },
     "NODE_CROWD_EMBARRASSMENT": {
       "speaker": "THE VOICE",
-      "text": "Deine Worte sitzen nicht und du stotterst verzweifelt. Ein Raunen geht durch die Menge, diesmal aus Lachern. Die öffentliche Meinung belächelt dich nun.",
-      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE",
-      "triggerAction": "SET_FLAG_crowdsLaughingstock",
+      "text": "Deine Worte sitzen nicht und du stotterst verzweifelt. Ein Raunen geht durch die Menge, diesmal aus Lachern. Die öffentliche Meinung belächelt dich nun. Trotzdessen wirst du eingeladen, der Tradition des goldenen Regens nachzugehen.",
       "backgroundPath": "/images/throne_hall.jpg",
-
-      "text": "Trotzdessen wirst eingeladen der Tradition des goldenen Regens nachzugehen.",
-      "triggerAction": "SET_FLAG_AND_END",
+      "triggerAction": "SET_FLAG_crowdsLaughingstock",
+      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE",
       "choices": [
         {
-        "text": "An der Tradition teilnehmen",
-        "targetNodeId": "NODE_CEREMONY_COMPLETE",
-        "minigameId": "CASH_DROP",
-        "triggerAction": "SET_FLAG_CEREMONY",
-        "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE"
+          "text": "An der Tradition teilnehmen",
+          "targetNodeId": "NODE_CEREMONY_COMPLETE",
+          "targetStoryFile": "/story/convoWBrotherDB.json",
+          "minigameId": "CASH_DROP",
+          "triggerAction": "SET_FLAG_CEREMONY",
+          "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE"
         },
         {
           "text": "Nicht an der Tradition teilnehmen",
           "targetNodeId": "NODE_CEREMONY_COMPLETE",
+          "targetStoryFile": "/story/convoWBrotherDB.json",
           "triggerAction": "SET_FLAG_SKIP_CEREMONY",
           "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE"
         }
@@ -113,16 +112,13 @@
     },
     "NODE_PUBLIC_OPINION_NEUTRAL": {
       "speaker": "THE VOICE",
-      "text": "Du sagst nichts. Die Stimmen gehen langsam im Jubel verloren.",
+      "text": "Du sagst nichts. Die Stimmen gehen langsam im Jubel verloren. Trotzdessen wirst du eingeladen, der Tradition des goldenen Regens nachzugehen.",
       "backgroundPath": "/images/throne_hall.jpg",
-
-      "text": "Trotzdessen wirst eingeladen der Tradition des goldenen Regens nachzugehen.",
-      "triggerAction": "SET_FLAG_AND_END",
-
       "choices": [
         {
           "text": "An der Tradition teilnehmen",
           "targetNodeId": "NODE_CEREMONY_COMPLETE",
+          "targetStoryFile": "/story/convoWBrotherDB.json",
           "triggerAction": "SET_FLAG_CEREMONY",
           "minigameId": "CASH_DROP",
           "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_POSITIVE"
@@ -130,6 +126,7 @@
         {
           "text": "Nicht an der Tradition teilnehmen",
           "targetNodeId": "NODE_CEREMONY_COMPLETE",
+          "targetStoryFile": "/story/convoWBrotherDB.json",
           "triggerAction": "SET_FLAG_SKIP_CEREMONY",
           "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE"
         }
@@ -137,5 +134,3 @@
     }
   }
 }
-
-

@@ -1,0 +1,137 @@
+{
+  "sceneId": "APPRENTICE_DWARF",
+  "startNodeId": "NODE_APPRENTICE_START",
+  "nodes": {
+    "NODE_APPRENTICE_START": {
+      "speaker": "THE VOICE",
+      "text": "Ein paar Tage später steht ein zerzaustes Kind vor deiner Tür - dünn, mit Brandnarben an den Händen, die für sein Alter zu alt wirken. Es will lernen, sagt es, und braucht nicht mehr als Essen und ein Dach über dem Kopf dafür.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Ihm eine echte Aufgabe geben und sehen, was in ihm steckt",
+          "minigameId": "SMITHY",
+          "targetNodeId": "NODE_TEST_DEBRIEF",
+          "targetNodeIdHigh": "NODE_TEST_GREAT",
+          "targetNodeIdMedium": "NODE_TEST_OK",
+          "targetNodeIdLow": "NODE_TEST_BAD"
+        },
+        {
+          "text": "Es wegschicken - du hast selbst kaum genug für dich",
+          "targetNodeId": "NODE_REJECT_IMMEDIATELY"
+        }
+      ]
+    },
+    "NODE_TEST_DEBRIEF": {
+      "speaker": "THE VOICE",
+      "text": "(Kein eindeutiges Ergebnis erhalten.)",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_TEST_OK"
+        }
+      ]
+    },
+    "NODE_TEST_GREAT": {
+      "speaker": "THE VOICE",
+      "text": "Die Hände des Kindes sind unsicher, aber sein Blick nicht. Es trifft den Takt fast von Anfang an, als hätte es nur auf die Gelegenheit gewartet. Selten hast du ein solches Talent gesehen.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfFoundGiftedApprentice",
+      "actionParameter": "METAKEY_DWARF_APPRENTICE_TALENTED",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_ACCEPT_DECISION"
+        }
+      ]
+    },
+    "NODE_TEST_OK": {
+      "speaker": "THE VOICE",
+      "text": "Nicht brillant, aber auch nicht hoffnungslos. Mit genug Geduld - deiner, nicht seiner - könnte daraus etwas werden.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfFoundOkApprentice",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_ACCEPT_DECISION"
+        }
+      ]
+    },
+    "NODE_TEST_BAD": {
+      "speaker": "THE VOICE",
+      "text": "Das Metall verzieht sich, der Hammer verfehlt öfter, als er trifft, und am Ende bleibt nur verschwendetes Material übrig. Kein gutes Zeichen.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfFoundStrugglingApprentice",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_ACCEPT_DECISION"
+        }
+      ]
+    },
+    "NODE_ACCEPT_DECISION": {
+      "speaker": "THE VOICE",
+      "text": "Du könntest es trotzdem versuchen - oder das Kind dahin zurückschicken, woher es kam.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Es als Lehrling aufnehmen",
+          "triggerAction": "SET_FLAG_dwarfAcceptedApprentice",
+          "actionParameter": "METAKEY_DWARF_HAS_APPRENTICE",
+          "targetNodeId": "NODE_ACCEPT_GOOD"
+        },
+        {
+          "text": "Es doch wegschicken",
+          "targetNodeId": "NODE_REJECT_APPRENTICE"
+        }
+      ]
+    },
+    "NODE_ACCEPT_GOOD": {
+      "speaker": "THE VOICE",
+      "text": "Von da an ist die Werkstatt nie wieder ganz leer - zwei Augenpaare, die auf das Feuer starren, zwei Paar Hände, die den Rest der Stadt am Laufen halten. Es ist nicht viel, aber es ist etwas.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_LIFE_CONTINUES"
+        }
+      ]
+    },
+    "NODE_REJECT_IMMEDIATELY": {
+      "speaker": "THE VOICE",
+      "text": "Du schickst es fort, ohne lange nachzudenken. Es verschwindet in den Gassen, so schnell, wie es aufgetaucht ist. Ob es das nächste Dach findet, wirst du nie erfahren.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfRejectedApprenticeOutright",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_LIFE_CONTINUES"
+        }
+      ]
+    },
+    "NODE_REJECT_APPRENTICE": {
+      "speaker": "THE VOICE",
+      "text": "Du entscheidest dich dagegen. Es ist enttäuscht, sagt aber nichts, bevor es wieder in den Gassen verschwindet. Die Werkstatt bleibt, wie sie war - nur du, der Amboss, und die Stille.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfDeclinedApprentice",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_LIFE_CONTINUES"
+        }
+      ]
+    },
+    "NODE_LIFE_CONTINUES": {
+      "speaker": "THE VOICE",
+      "text": "Die Wochen vergehen. In der Stadt wird es lauter - nicht in deiner Werkstatt, sondern auf den Straßen, wo sich etwas zusammenbraut, das größer ist als jede einzelne Werkstatt.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_REVOLUTION_START",
+          "targetStoryFile": "/story/Dwarf/revolutionDwarf.json"
+        }
+      ]
+    }
+  }
+}
