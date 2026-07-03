@@ -81,6 +81,9 @@ public class StandardDialogueScene extends ModularScene {
         DialogueNode node = (nodeId != null) ? template.getNodes().get(nodeId) : null;
 
         if (node.getChoices() == null || node.getChoices().isEmpty()) {
+            if (node.getBackgroundPath() != null) view.setBackgroundImage(node.getBackgroundPath());
+            view.setPortraits(node.getLeftPortrait(), node.getRightPortrait());
+            view.showLine(node.getSpeaker(), node.getText());
             if (node.getTriggerAction() != null) {
                 handleTrigger(node.getTriggerAction(), node.getActionParameter());
             }
