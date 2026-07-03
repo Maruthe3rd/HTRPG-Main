@@ -18,7 +18,7 @@ import java.util.List;
 
 public class StandardDialogueScene extends ModularScene {
 
-    private static final String DEFAULT_STORY_FILE = "/story/prologueDB.json";
+    private static final String DEFAULT_STORY_FILE = "/story/Dragonborn/prologueDB.json";
 
     private DialogueTemplate template;
     private String currentNodeId;
@@ -113,15 +113,23 @@ public class StandardDialogueScene extends ModularScene {
     }
 
     private void handleChoice(DialogueChoice choice) {
+        String destinationFile = (choice.getTargetStoryFile() != null) ? choice.getTargetStoryFile() : storyFile;
+
         if (choice.getMinigameId() != null) {
-            // This choice launches a minigame; the target node is only reached once it finishes.
             ScenePayload minigamePayload = new ScenePayload("MINIGAME", payload.activeHeroId())
                     .withMetadata("MINIGAME_ID", choice.getMinigameId())
-                    .withMetadata("RETURN_STORY_FILE", storyFile)
-                    .withMetadata("RETURN_NODE_ID", choice.getTargetNodeId());
+                    .withMetadata("RETURN_STORY_FILE", destinationFile)
+                    .withMetadata("RETURN_NODE_ID", choice.getTargetNodeId())
+                    .withMetadata("RETURN_NODE_ID_HIGH", choice.getTargetNodeIdHigh())
+                    .withMetadata("RETURN_NODE_ID_MEDIUM", choice.getTargetNodeIdMedium())
+                    .withMetadata("RETURN_NODE_ID_LOW", choice.getTargetNodeIdLow());
             SceneDirector.switchScene(new MiniGameScene(masterViewport), minigamePayload);
+        } else if (choice.getTargetStoryFile() != null) {
+            ScenePayload nextChapterPayload = new ScenePayload("DIALOGUE", payload.activeHeroId())
+                    .withMetadata("STORY_FILE", choice.getTargetStoryFile())
+                    .withMetadata("START_NODE", choice.getTargetNodeId());
+            SceneDirector.switchScene(new StandardDialogueScene(masterViewport), nextChapterPayload);
         } else {
-            // No minigame attached -> jump straight to the next node/scene as before.
             showNode(choice.getTargetNodeId());
         }
     }

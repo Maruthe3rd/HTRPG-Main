@@ -1,0 +1,121 @@
+{
+  "sceneId": "REVOLUTION_DWARF",
+  "startNodeId": "NODE_REVOLUTION_START",
+  "nodes": {
+    "NODE_REVOLUTION_START": {
+      "speaker": "THE VOICE",
+      "text": "Die Gerüchte werden zu Rufen, die Rufe zu Fackeln. Die Unterstadt hat genug von Steuern, die sie nicht bezahlen können, und einem Palast, der nie hierher blickt. Es ist nur eine Frage der Zeit, bis das hier ein echter Aufstand wird - und du musst entscheiden, welche Rolle du dabei spielst.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "choices": [
+        {
+          "text": "In der Nachbarschaft herumhören und versuchen, Verbündete zu finden",
+          "targetNodeId": "NODE_CONNECT"
+        },
+        {
+          "text": "Dich raushalten und einfach weiterarbeiten",
+          "targetNodeId": "NODE_STAY_OUT"
+        }
+      ]
+    },
+    "NODE_STAY_OUT": {
+      "speaker": "THE VOICE",
+      "text": "Du schließt die Werkstatt ab, wie jeden Abend, und lässt die Straße die Straße sein. Aber die Unruhe kümmert sich nicht darum, ob du mitmachst - sie kommt trotzdem zu dir.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfStayedNeutral",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_REVOLUTION_UNPREPARED"
+        }
+      ]
+    },
+    "NODE_REVOLUTION_UNPREPARED": {
+      "speaker": "THE VOICE",
+      "text": "Der Aufstand bricht los, ohne dich gefragt zu haben. Ohne Waffen, ohne Plan, ohne genug Leute, die wissen, was sie tun. Die Wachen brauchen nicht lange, um damit fertigzuwerden - und deine Werkstatt liegt genau auf ihrem Weg.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_DWARF_DEAD_LACK_OF_PEOPLE",
+      "choices": []
+    },
+    "NODE_CONNECT": {
+      "speaker": "THE VOICE",
+      "text": "Du fängst an, mit den Leuten zu reden, die durch deine Werkstatt kommen - Kunden, Nachbarn, ein alter Freund deines Vaters. Vorsichtig tauscht ihr aus, was ihr hört und was ihr fürchtet. Einer von ihnen hört genauer zu als die anderen.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Ihn direkt fragen, ob er dir helfen würde",
+          "targetNodeId": "NODE_CONVINCE_ALLY"
+        }
+      ]
+    },
+    "NODE_CONVINCE_ALLY": {
+      "speaker": "Nachbar",
+      "text": "Helfen? Das hier ist kein Handwerk, das man einfach so lernt. Warum sollte ich mein eigenes Leben aufs Spiel setzen, für etwas, das genauso gut in einem Massaker enden könnte?",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "choices": [
+        {
+          "text": "Ihn in Ruhe lassen - er kommt allein klar",
+          "targetNodeId": "NODE_ALLY_NO"
+        },
+        {
+          "text": "Ihm sagen, dass ihr es zusammen besser schafft als allein",
+          "targetNodeId": "NODE_ALLY_YES"
+        }
+      ]
+    },
+    "NODE_ALLY_NO": {
+      "speaker": "THE VOICE",
+      "text": "Du lässt es dabei bewenden. Er hat recht, irgendwie - jeder muss selbst wissen, wie viel er riskiert. Als der Aufstand losbricht, bist du wieder allein, mit einer Werkstatt voller halbfertiger Klingen und zu wenig Zeit.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_DWARF_DEAD_LACK_OF_EQUIPMENT",
+      "choices": []
+    },
+    "NODE_ALLY_YES": {
+      "speaker": "Nachbar",
+      "text": "... Gut. Aber wenn wir das machen, dann richtig. Deine Werkstatt hat einen Ofen, einen Amboss und eine Tür, die man verriegeln kann - das ist mehr, als die meisten hier haben.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfGainedRevolutionAlly",
+      "actionParameter": "METAKEY_DWARF_HAS_ALLY",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_PREPARE_REVOLUTION"
+        }
+      ]
+    },
+    "NODE_PREPARE_REVOLUTION": {
+      "speaker": "THE VOICE",
+      "text": "In den folgenden Nächten wird aus deiner Werkstatt etwas anderes: ein Unterschlupf, eine Waffenkammer, ein Ort, an dem Leute sich sicher genug fühlen, um zu bleiben. Du schmiedest, bis deine Hände taub werden - Werkzeug, Klingen, alles, was hilft.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_dwarfArmedTheRevolution",
+      "choices": [
+        {
+          "text": "Weiter, wenn es so weit ist",
+          "targetNodeId": "NODE_REVOLUTION_STARTS"
+        }
+      ]
+    },
+    "NODE_REVOLUTION_STARTS": {
+      "speaker": "THE VOICE",
+      "text": "Der Aufstand bricht los - diesmal nicht ins Leere hinein. Bewaffnete Nachbarn, ein Unterschlupf, der hält, und ein Plan, so gut, wie ihr ihn in der kurzen Zeit schmieden konntet. Es reicht nicht, um alles zu gewinnen. Aber es reicht, um zu überleben.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_dwarfRevolutionSurvived",
+      "actionParameter": "METAKEY_DWARF_REVOLUTION_SUCCESS",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_GOOD_END"
+        }
+      ]
+    },
+    "NODE_GOOD_END": {
+      "speaker": "THE VOICE",
+      "text": "Als der Rauch sich verzieht, steht deine Werkstatt noch - genau wie die Menschen, die sich in ihr versteckt hatten. Kein sauberer Sieg, aber ein Ende, das ihr gemeinsam erreicht habt. Ihr alle habt überlebt.",
+      "backgroundPath": "/images/smithy_interior.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_DWARF_GOOD_END",
+      "choices": []
+    }
+  }
+}

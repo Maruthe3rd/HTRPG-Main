@@ -1,0 +1,115 @@
+{
+  "sceneId": "CONVO_DRAGONBORN",
+  "startNodeId": "NODE_CEREMONY_COMPLETE",
+  "nodes": {
+    "NODE_CEREMONY_COMPLETE": {
+      "speaker": "Bruder",
+      "text": "Also, wenn meine Zeremonie so wie deine aussehen würde, wäre mir das peinlich.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "title": "Selbstsicher",
+          "text": "Und trotzdem war es meine Feier, nicht deine!",
+          "targetNodeId": "NODE_ROUTE_CONFIDENT"
+        },
+        {
+          "title": "Unsicher",
+          "text": "Die Leute waren einfach nicht so begeistert...",
+          "targetNodeId": "NODE_ROUTE_UNSURE"
+        }
+      ]
+    },
+    "NODE_ROUTE_CONFIDENT": {
+      "speaker": "Bruder",
+      "text": "Wow, so viel Stolz für eine Feier, bei der man dich fast ausgebuht hätte. Aber gut, ganz wie du meinst, großer Bruder.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_BROTHER_BUSINESS_TALK"
+        }
+      ]
+    },
+    "NODE_ROUTE_UNSURE": {
+      "speaker": "Bruder",
+      "text": "Nicht begeistert? Sie haben dich fast von der Bühne gebrüllt. Aber mach dir nichts draus, in ein paar Jahren bin ich dran, und dann zeige ich denen, wie man das macht.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_BROTHER_BUSINESS_TALK"
+        }
+      ]
+    },
+    "NODE_BROTHER_BUSINESS_TALK": {
+      "speaker": "Bruder",
+      "text": "Nebenbei, ich habe heute Nacht noch etwas zu erledigen. Ein paar meiner Männer statten diesem stur köpfigen Zwergenschmied in der Unterstadt einen Besuch ab - der Kerl weigert sich seit Wochen, seinen 'Beitrag' zu leisten. Wird Zeit, dass ihm jemand erklärt, wie das hier läuft.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Es dabei belassen",
+          "targetNodeId": "NODE_MISS_ROBBERY_PLAN"
+        },
+        {
+          "text": "Nachhaken, was für ein 'Besuch' das genau sein soll",
+          "targetNodeId": "NODE_PRESS_1"
+        }
+      ]
+    },
+    "NODE_PRESS_1": {
+      "speaker": "Bruder",
+      "text": "Das ist nichts, worüber du dir den Kopf zerbrechen musst. Kümmere dich um deine eigenen Angelegenheiten.'",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Es dabei belassen",
+          "targetNodeId": "NODE_MISS_ROBBERY_PLAN"
+        },
+        {
+          "text": "Nicht lockerlassen und weiter nachbohren",
+          "targetNodeId": "NODE_PRESS_2"
+        }
+      ]
+    },
+    "NODE_PRESS_2": {
+      "speaker": "Bruder",
+      "text": "Seine Miene verhärtet sich, genervt von deiner Beharrlichkeit. 'Warum interessiert dich das überhaupt so sehr?'",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Aufgeben und das Thema wechseln",
+          "targetNodeId": "NODE_MISS_ROBBERY_PLAN"
+        },
+        {
+          "text": "Ihn direkt fragen, ob er vorhat, die Schmiede ausrauben zu lassen",
+          "targetNodeId": "NODE_LEARN_ROBBERY_PLAN"
+        }
+      ]
+    },
+    "NODE_LEARN_ROBBERY_PLAN": {
+      "speaker": "Bruder",
+      "text": "Für einen Moment sagt er gar nichts. Dann ein kurzes, kaltes Lächeln. 'Na gut, wenn du es genau wissen willst: ja. Heute Nacht wird die Schmiede geplündert, und der Zwerg lernt, wem diese Stadt wirklich gehört. Zufrieden?'",
+      "backgroundPath": "/images/royal_room.jpg",
+      "triggerAction": "SET_FLAG_learnedRobberyPlan",
+      "choices": [
+        {
+          "text": "Was tust du mit diesem Wissen?",
+          "targetNodeId": "NODE_STEP_IN",
+          "targetStoryFile": "/story/smithyRobberyDB.json"
+        }
+      ]
+    },
+    "NODE_MISS_ROBBERY_PLAN": {
+      "speaker": "THE VOICE",
+      "text": "Du lässt es dabei bewenden. Was auch immer er vorhat, es scheint dir in diesem Moment nicht wichtig genug, um weiter darauf zu bestehen. Du wendest dich anderen Dingen zu.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_ROBBERY_HAPPENS_OFFSCREEN",
+          "targetStoryFile": "/story/smithyRobberyDB.json"
+        }
+      ]
+    }
+  }
+}

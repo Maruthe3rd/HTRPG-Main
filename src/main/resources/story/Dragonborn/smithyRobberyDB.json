@@ -1,0 +1,123 @@
+{
+  "sceneId": "SMITHY_ROBBERY_DRAGONBORN",
+  "startNodeId": "NODE_STEP_IN",
+  "nodes": {
+    "NODE_STEP_IN": {
+      "speaker": "THE VOICE",
+      "text": "Die Sonne ist längst untergegangen. Irgendwo in der Unterstadt bereiten sich die Männer deines Bruders darauf vor, die Schmiede zu überfallen - und du bist vielleicht der Einzige, der das noch verhindern kann.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Selbst zur Schmiede eilen und eingreifen",
+          "targetNodeId": "NODE_FIGHT_START"
+        },
+        {
+          "text": "Die Wachen informieren",
+          "targetNodeId": "NODE_CALL_GUARDS"
+        },
+        {
+          "text": "Nichts sagen und deinen Bruder decken",
+          "targetNodeId": "NODE_PRETEND"
+        }
+      ]
+    },
+    "NODE_ROBBERY_HAPPENS_OFFSCREEN": {
+      "speaker": "THE VOICE",
+      "text": "Am nächsten Morgen hörst du die Neuigkeit beiläufig von einem Diener: die Schmiede eines Zwergen in der Unterstadt wurde in der Nacht überfallen und übel zugerichtet. Du denkst kurz an das Gespräch mit deinem Bruder zurück, kannst aber nichts Genaues damit verbinden. Ein flaues Gefühl bleibt trotzdem zurück, und in der Stadt macht bereits das Gerücht die Runde, dass Männer aus dem Palast dahinterstecken.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "triggerAction": "SET_FLAG_smithyRobbedUnprevented",
+      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_DWARVES_REACTION"
+        }
+      ]
+    },
+    "NODE_CALL_GUARDS": {
+      "speaker": "THE VOICE",
+      "text": "Du schickst einen Wachtrupp los. Sie erreichen die Unterstadt, aber zu spät - die Schmiede ist bereits verwüstet, die Männer deines Bruders längst über alle Berge. Immerhin, du hast es versucht, auch wenn es niemandem etwas genutzt hat.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_calledGuardsTooSlow",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_DWARVES_REACTION"
+        }
+      ]
+    },
+    "NODE_PRETEND": {
+      "speaker": "THE VOICE",
+      "text": "Du sagst nichts. Am nächsten Morgen ist die Schmiede verwüstet, der Zwergenschmied verletzt, aber am Leben. Diesmal weißt du genau, wessen Schuld das ist - und dass du es hättest verhindern können.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "triggerAction": "SET_FLAG_coveredForBrother",
+      "actionParameter": "METAKEY_DRAGONBORN_PUBLIC_OPINION_NEGATIVE",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_DWARVES_REACTION"
+        }
+      ]
+    },
+    "NODE_FIGHT_START": {
+      "speaker": "THE VOICE",
+      "text": "Du erreichst die Schmiede, gerade als die Männer deines Bruders die Tür aufbrechen. Der Zwergenschmied presst sich mit erhobenem Hammer gegen die Werkbank, entschlossen, sich zu wehren, so aussichtslos es auch scheint.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "choices": [
+        {
+          "text": "Dich den Männern in den Weg stellen und sie zurückdrängen",
+          "targetNodeId": "NODE_FIGHT_WON"
+        },
+        {
+          "text": "Dich sofort auf den nächststehenden stürzen",
+          "targetNodeId": "NODE_FIGHT_LOST_DEAD"
+        }
+      ]
+    },
+    "NODE_FIGHT_WON": {
+      "speaker": "THE VOICE",
+      "text": "Deine bloße Anwesenheit reicht - keiner der Männer will sich mit dem neuen Herzog persönlich anlegen. Sie verschwinden in der Dunkelheit, die Schmiede bleibt weitgehend unversehrt. Der Zwerg starrt dich an, misstrauisch, aber lebendig.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_smithySavedByDragonborn",
+      "actionParameter": "METAKEY_DRAGONBORN_SAVED_DWARF_SMITHY",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_BROTHER_CONFRONTATION"
+        }
+      ]
+    },
+    "NODE_FIGHT_LOST_DEAD": {
+      "speaker": "THE VOICE",
+      "text": "Du stürmst hinein, ohne nachzudenken. Einer der Männer reagiert schneller als erwartet, seine Klinge findet eine Lücke in deiner Deckung. Es ist das letzte, was du je siehst.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_DRAGONBORN_DEAD",
+      "choices": []
+    },
+    "NODE_BROTHER_CONFRONTATION": {
+      "speaker": "Bruder",
+      "text": "Du stellst dich mir wegen eines Zwergen entgegen? Deiner eigenen Familie? Das werde ich nicht vergessen.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "triggerAction": "SET_FLAG_brotherResentsIntervention",
+      "choices": [
+        {
+          "text": "Weiter",
+          "targetNodeId": "NODE_DWARVES_REACTION"
+        }
+      ]
+    },
+    "NODE_DWARVES_REACTION": {
+      "speaker": "THE VOICE",
+      "text": "In den Tagen danach hörst du, wie in der Unterstadt über dich gesprochen wird. Je nachdem, was in jener Nacht geschehen ist, klingt das entweder nach vorsichtigem Respekt - oder nach bitterem Misstrauen. Dein Bruder jedenfalls spricht kaum noch mit dir.",
+      "backgroundPath": "/images/royal_room.jpg",
+      "choices": [
+        {
+          "text": "Weiter zur Politik",
+          "targetNodeId": "NODE_POLITICS_START",
+          "targetStoryFile": "/story/politicsDB.json"
+        }
+      ]
+    }
+  }
+}

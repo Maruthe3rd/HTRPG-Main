@@ -48,8 +48,17 @@ public class SmithyGame implements MiniGame {
 
     public SmithyGame(Node screen) {
         this.screen = screen;
-        dwarfDown = new Image(getClass().getResource("/dwarfArmDown.png").toExternalForm());
-        dwarfUp = new Image(getClass().getResource("/dwarfArmUp.png").toExternalForm());
+        dwarfDown = loadSprite("/dwarfArmDown.png");
+        dwarfUp = loadSprite("/dwarfArmUp.png");
+    }
+
+    // /dwarfArmDown.png and /dwarfArmUp.png (the hammer-swing frames) add later!
+    private Image loadSprite(String resourcePath) {
+        java.net.URL url = getClass().getResource(resourcePath);
+        if (url == null) {
+            url = getClass().getResource("/images/characters/dwarf.png");
+        }
+        return (url != null) ? new Image(url.toExternalForm()) : null;
     }
 
     public int getTotalScore() { return totalScore; }
@@ -72,6 +81,15 @@ public class SmithyGame implements MiniGame {
     @Override
     public boolean isFinished() {
         return finished;
+    }
+
+    // 3 pts/strike max (Perfect), MAX_STRIKES strikes -> up to 30 points total.
+    @Override
+    public String getResultTier() {
+        int maxPossible = MAX_STRIKES * 3;
+        if (totalScore >= maxPossible * 0.8) return "HIGH";
+        if (totalScore >= maxPossible * 0.35) return "MEDIUM";
+        return "LOW";
     }
 
     @Override
