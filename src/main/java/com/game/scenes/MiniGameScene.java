@@ -86,7 +86,8 @@ public class MiniGameScene extends ModularScene {
                 }
 
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-                drawScaled(gc);
+                //drawScaled(gc);
+                activeGame.draw(gc); // what the helly happened here? @Jana old code worky new code makes big doodoo...
 
                 if (activeGame.isFinished()) {
                     stop();
