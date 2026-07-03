@@ -1,6 +1,7 @@
 package com.game.ui;
 
 import javafx.beans.binding.Bindings;
+import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -11,12 +12,12 @@ public final class GameScaler {
 
     private GameScaler() {}
 
-    public static void bind(Stage stage, StackPane gameRoot) {
+    public static void bind(Scene scene, StackPane gameRoot) {
 
         gameRoot.scaleXProperty().bind(
                 Bindings.min(
-                        stage.widthProperty().divide(VIRTUAL_WIDTH),
-                        stage.heightProperty().divide(VIRTUAL_HEIGHT)
+                        scene.widthProperty().divide(VIRTUAL_WIDTH),
+                        scene.heightProperty().divide(VIRTUAL_HEIGHT)
                 )
         );
 

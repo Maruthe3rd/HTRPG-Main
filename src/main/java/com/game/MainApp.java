@@ -17,6 +17,10 @@ public class MainApp extends Application {
         StackPane masterViewport = new StackPane();
         StackPane gameRoot = new StackPane();
 
+        gameRoot.setPrefSize(1920, 1080);
+        gameRoot.setMinSize(1920, 1080);
+        gameRoot.setMaxSize(1920, 1080);
+
         Rectangle clip = new Rectangle(1920, 1080);
 
         gameRoot.setClip(clip);
@@ -27,7 +31,7 @@ public class MainApp extends Application {
 
         primaryStage.setScene(masterScene);
 
-        GameScaler.bind(primaryStage, gameRoot);
+        GameScaler.bind(masterScene, gameRoot);
 
         primaryStage.setFullScreen(true);
         primaryStage.setFullScreenExitHint("");
