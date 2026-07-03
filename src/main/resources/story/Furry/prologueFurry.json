@@ -4,9 +4,15 @@
   "nodes": {
     "NODE_START": {
       "speaker": "THE VOICE",
-      "text": "Du erwachst in der Unterstadt, so wie an jedem anderen Tag deines Lebens - kein Titel, kein Erbe, nur das, was du dir selbst erarbeitest. (Die Geschichte des Furry-Volkes ist noch nicht geschrieben - dieser Weg wird bald folgen.)",
+      "text": "Du erwachst in der Unterstadt, so wie an jedem anderen Tag deines Lebens - kein Titel, kein Erbe, nur das, was du dir selbst erarbeitest.",
       "backgroundPath": "/images/street_riot.jpg",
-      "choices": []
+      "choices": [
+        {
+          "text": "Sich umgucken",
+          "targetNodeId": "NODE_FLASHBACK_START",
+          "targetStoryFile": "/story/Dwarf/revolutionDwarf.json"
+        }
+      ]
     }
   }
 }

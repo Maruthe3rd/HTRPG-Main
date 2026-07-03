@@ -66,7 +66,7 @@
         {
           "text": "Zur Politik übergehen",
           "targetNodeId": "NODE_POLITICS_START",
-          "targetStoryFile": "/story/politicsDB.json"
+          "targetStoryFile": "/story/Dragonborn/politicsDB.json"
         }
       ]
     },
@@ -115,7 +115,7 @@
         {
           "text": "Weiter zur Politik",
           "targetNodeId": "NODE_POLITICS_START",
-          "targetStoryFile": "/story/politicsDB.json"
+          "targetStoryFile": "/story/Dragonborn/politicsDB.json"
         }
       ]
     }

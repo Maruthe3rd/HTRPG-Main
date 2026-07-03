@@ -13,11 +13,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
-/**
- * Generic host for any MiniGame. A dialogue choice sends the player here instead
- * of straight to the next node; once the MiniGame reports isFinished(), control
- * goes back to StandardDialogueScene at whatever node the choice pointed to.
- */
 public class MiniGameScene extends ModularScene {
 
     private static final double FIXED_TIMESTEP = 1.0 / 60.0;
@@ -92,7 +87,7 @@ public class MiniGameScene extends ModularScene {
                 }
 
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-                activeGame.draw(gc);
+                drawScaled(gc);
 
                 if (activeGame.isFinished()) {
                     stop();
@@ -104,6 +99,31 @@ public class MiniGameScene extends ModularScene {
 
         javafx.application.Platform.runLater(root::requestFocus);
         return root;
+    }
+
+    private void drawScaled(GraphicsContext gc) {
+        double designWidth = activeGame.getDesignWidth();
+        double designHeight = activeGame.getDesignHeight();
+        double canvasWidth = canvas.getWidth();
+        double canvasHeight = canvas.getHeight();
+
+        double scale = Math.min(canvasWidth / designWidth, canvasHeight / designHeight);
+        double scaledWidth = designWidth * scale;
+        double scaledHeight = designHeight * scale;
+        double offsetX = (canvasWidth - scaledWidth) / 2.0;
+        double offsetY = (canvasHeight - scaledHeight) / 2.0;
+
+        gc.setFill(javafx.scene.paint.Color.BLACK);
+        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        gc.save();
+        try {
+            gc.translate(offsetX, offsetY);
+            gc.scale(scale, scale);
+            activeGame.draw(gc);
+        } finally {
+            gc.restore();
+        }
     }
 
     private void returnToDialogue() {

@@ -1,0 +1,19 @@
+{
+  "sceneId": "REVOLUTION_DRAGONBORN",
+  "startNodeId": "NODE_REVOLUTION_START",
+  "nodes": {
+    "NODE_REVOLUTION_START": {
+      "speaker": "Menschenmasse",
+      "text": "Nieder mit dem Adel!",
+      "backgroundPath": "/images/council_chamber.jpg",
+      "choices": [
+        {
+          "text": "Aufgrund deiner Entscheidungen hast du Überlebt. Jedoch, als einziger deiner Familie",
+          "triggerAction": "SET_FLAG_AND_END",
+          "actionParameter": "METAKEY_DRAGONBORN_GOOD_END",
+          "choices": []
+        }
+      ]
+    }
+  }
+}

@@ -111,7 +111,7 @@
     },
     "NODE_GOOD_END": {
       "speaker": "THE VOICE",
-      "text": "Als der Rauch sich verzieht, steht deine Werkstatt noch - genau wie die Menschen, die sich in ihr versteckt hatten. Kein sauberer Sieg, aber ein Ende, das ihr gemeinsam erreicht habt. Ihr alle habt überlebt.",
+      "text": "Als der Rauch sich verzieht, steht deine Werkstatt noch - genau wie die meisten Menschen und du. Kein Sieg, aber ein Ende, das ihr gemeinsam erreicht habt. Ihr alle habt überlebt.",
       "backgroundPath": "/images/smithy_interior.jpg",
       "triggerAction": "SET_FLAG_AND_END",
       "actionParameter": "METAKEY_DWARF_GOOD_END",

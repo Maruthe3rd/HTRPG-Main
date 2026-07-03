@@ -96,8 +96,8 @@
       "choices": []
     },
     "NODE_BROTHER_CONFRONTATION": {
-      "speaker": "Bruder",
-      "text": "Du stellst dich mir wegen eines Zwergen entgegen? Deiner eigenen Familie? Das werde ich nicht vergessen.",
+      "speaker": "THE VOICE",
+      "text": "Dein Bruder ist empört, dass du dich seinen Plänen in den Weg stellst und euer Verhältnis hat deutlich gelitten.",
       "backgroundPath": "/images/royal_room.jpg",
       "triggerAction": "SET_FLAG_brotherResentsIntervention",
       "choices": [
@@ -109,13 +109,13 @@
     },
     "NODE_DWARVES_REACTION": {
       "speaker": "THE VOICE",
-      "text": "In den Tagen danach hörst du, wie in der Unterstadt über dich gesprochen wird. Je nachdem, was in jener Nacht geschehen ist, klingt das entweder nach vorsichtigem Respekt - oder nach bitterem Misstrauen. Dein Bruder jedenfalls spricht kaum noch mit dir.",
+      "text": "Jedoch in den Tagen danach hörst du, wie in der Unterstadt über dich gesprochen wird. Je nachdem, was in jener Nacht geschehen ist, klingt das entweder nach vorsichtigem Respekt - oder nach bitterem Misstrauen. Dein Bruder jedenfalls spricht kaum noch mit dir.",
       "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
           "text": "Weiter zur Politik",
-          "targetNodeId": "NODE_POLITICS_START",
-          "targetStoryFile": "/story/politicsDB.json"
+          "targetNodeId": "NODE_UNREST_START",
+          "targetStoryFile": "/story/Dragonborn/politicsDB.json"
         }
       ]
     }
