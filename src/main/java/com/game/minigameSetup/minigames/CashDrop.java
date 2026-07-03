@@ -8,9 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class CashDrop implements MiniGame {
 
@@ -58,16 +56,24 @@ public class CashDrop implements MiniGame {
     private int score = 0;
 
     private final Image dragonBorn;
-    private final Image dwarf;
+    private final Random random = new Random();
+    private final Image[] dwarfSprites;
+
     private final Image coin;
 
     private  boolean spaceHeld;
 
     public CashDrop() {
         spawnPerson();
-        dragonBorn = new Image(getClass().getResource("/images/characters/dragonborn.png").toExternalForm());
-        dwarf = new Image(getClass().getResource("/images/characters/dwarf.png").toExternalForm());
-        coin = new Image(getClass().getResource("/images/coin.png").toExternalForm());
+
+        dragonBorn = new Image(Objects.requireNonNull(getClass().getResource("/images/characters/dragonborn.png")).toExternalForm());
+
+        dwarfSprites = new Image[]{
+                new Image(Objects.requireNonNull(getClass().getResource("/images/characters/attackers/Dwarf_0.png")).toExternalForm()),
+                new Image(Objects.requireNonNull(getClass().getResource("/images/characters/attackers/Dwarf_1.png")).toExternalForm()),
+                new Image(Objects.requireNonNull(getClass().getResource("/images/characters/attackers/Dwarf_2.png")).toExternalForm())
+        };
+        coin = new Image(Objects.requireNonNull(getClass().getResource("/images/coin.png")).toExternalForm());
 
     }
 
@@ -95,8 +101,11 @@ public class CashDrop implements MiniGame {
                 }
             }
             if (!tooClose) {
-                crowd.add(new double[]{x, y, PERSON_HEALTH});
+                int spriteIndex = random.nextInt(3);
+                crowd.add(new double[]{x, y, PERSON_HEALTH, spriteIndex});
                 return;
+
+
             }
         }
     }
@@ -106,6 +115,8 @@ public class CashDrop implements MiniGame {
         timeSinceLastShot += dt;
         if (spaceHeld) shoot();
         if (gameOver) return;
+
+
 
         if (startTimeNanos < 0) startTimeNanos = System.nanoTime();
         double elapsed = (System.nanoTime() - startTimeNanos) / 1_000_000_000.0;
@@ -139,9 +150,9 @@ public class CashDrop implements MiniGame {
                 if (person[2] <= 0) continue; // already dead
                 if (rectsOverlap(p[0], p[1], PROJECTILE_WIDTH, PROJECTILE_HEIGHT,
                         person[0], person[1], PERSON_WIDTH, PERSON_HEIGHT)) {
-                    person[2] -= 1;                 // damage
-                    person[1] += KNOCKBACK_AMOUNT;  // knockback = pushed back down, away from player
-                    p[1] = HEIGHT + 1;              // mark projectile for removal
+                    person[2] -= 1;
+                    person[1] += KNOCKBACK_AMOUNT;
+                    p[1] = HEIGHT + 1;
                     if (person[2] <= 0) score += 10;
                 }
             }
@@ -149,7 +160,6 @@ public class CashDrop implements MiniGame {
         projectiles.removeIf(p -> p[1] > HEIGHT);
         crowd.removeIf(person -> person[2] <= 0);
 
-        // keep the pressure going once a wave is cleared
         timeSinceLastSpawn += dt;
         if (timeSinceLastSpawn >= SPAWN_INTERVAL_SECONDS) {
             timeSinceLastSpawn = 0;
@@ -176,21 +186,21 @@ public class CashDrop implements MiniGame {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, WIDTH, HEIGHT);
 
-        gc.setFill(Color.GOLD);
-        //gc.fillRect(playerX, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT);
-
         gc.drawImage(dragonBorn, playerX, PLAYER_Y, 80, 80);
 
-        gc.setFill(Color.YELLOW);
         for (double[] p : projectiles) {
             gc.drawImage(coin, p[0], p[1], PROJECTILE_WIDTH, PROJECTILE_HEIGHT);
         }
 
-        gc.setFill(Color.CRIMSON);
         for (double[] person : crowd) {
-            //gc.fillRect(person[0], person[1], PERSON_WIDTH, PERSON_HEIGHT);
-            gc.drawImage(dwarf, person[0], person[1], PERSON_WIDTH, PERSON_HEIGHT);
-
+            int spriteIndex = (int) person[3];
+            gc.drawImage(
+                    dwarfSprites[spriteIndex],
+                    person[0],
+                    person[1],
+                    PERSON_WIDTH,
+                    PERSON_HEIGHT
+            );
         }
 
         gc.setFill(Color.WHITE);
