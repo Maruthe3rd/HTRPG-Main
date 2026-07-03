@@ -80,9 +80,10 @@ public class StandardDialogueScene extends ModularScene {
     private void showNode(String nodeId) {
         DialogueNode node = (nodeId != null) ? template.getNodes().get(nodeId) : null;
 
-        if (node == null) {
-            view.showLine("", "(End of this branch — no further content written yet.)");
-            view.setChoices(new ArrayList<>());
+        if (node.getChoices() == null || node.getChoices().isEmpty()) {
+            if (node.getTriggerAction() != null) {
+                handleTrigger(node.getTriggerAction(), node.getActionParameter());
+            }
             return;
         }
 
@@ -101,13 +102,8 @@ public class StandardDialogueScene extends ModularScene {
         view.showLine(node.getSpeaker(), node.getText());
 
         List<DialogueView.ChoiceOption> options = new ArrayList<>();
-        if (node.getChoices() == null || node.getChoices().isEmpty()) {
-            options.add(new DialogueView.ChoiceOption("(End of prologue)", () -> {}, false));
-        } else {
-            for (DialogueChoice choice : node.getChoices()) {
-                options.add(new DialogueView.ChoiceOption(choice.getText(), () -> handleChoice(choice), true));
-            }
-        }
+        for (DialogueChoice choice : node.getChoices()) {options.add(new DialogueView.ChoiceOption(choice.getText(), () -> handleChoice(choice), true));}
+
         view.setChoices(options);
     }
 
