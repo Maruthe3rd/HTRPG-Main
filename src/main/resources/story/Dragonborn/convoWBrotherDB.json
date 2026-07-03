@@ -95,7 +95,7 @@
         {
           "text": "Was tust du mit diesem Wissen?",
           "targetNodeId": "NODE_STEP_IN",
-          "targetStoryFile": "/story/smithyRobberyDB.json"
+          "targetStoryFile": "/story/Dragonborn/smithyRobberyDB.json"
         }
       ]
     },
@@ -107,7 +107,7 @@
         {
           "text": "Weiter",
           "targetNodeId": "NODE_ROBBERY_HAPPENS_OFFSCREEN",
-          "targetStoryFile": "/story/smithyRobberyDB.json"
+          "targetStoryFile": "/story/Dragonborn/smithyRobberyDB.json"
         }
       ]
     }
