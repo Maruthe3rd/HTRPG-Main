@@ -134,6 +134,7 @@ public class DialogueView extends StackPane {
         textPanel.setMinHeight(190);
         textPanel.setMaxHeight(640);
         textPanel.setPadding(new Insets(28, 34, 22, 34));
+        textPanel.setTranslateY(0);
         StackPane.setAlignment(textPanel, Pos.TOP_CENTER);
         StackPane.setMargin(textPanel, new Insets(110, 0, 0, 0));
 

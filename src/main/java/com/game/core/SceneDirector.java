@@ -21,6 +21,8 @@ public final class SceneDirector {
     private static final Logger LOGGER = Logger.getLogger(SceneDirector.class.getName());
     private static final Duration TRANSITION_DURATION = Duration.millis(250);
 
+    private static StackPane gameRoot;
+
     private static volatile Stage primaryStage;
     private static volatile ModularScene currentScene;
     public static StackPane masterViewport;
@@ -29,9 +31,17 @@ public final class SceneDirector {
         SceneDirector.masterViewport = masterViewport;
     }
 
-    public static void initialize(Stage stage, StackPane viewport) {
-        primaryStage = Objects.requireNonNull(stage);
-        masterViewport = Objects.requireNonNull(viewport);
+    public static void initialize(
+            Stage stage,
+            StackPane viewport,
+            StackPane root
+    ) {
+
+        primaryStage = stage;
+
+        masterViewport = viewport;
+
+        gameRoot = root;
     }
 
     public static void switchScene(ModularScene targetScene, ScenePayload payload) {
@@ -78,7 +88,7 @@ public final class SceneDirector {
     private static void installSceneWithFade(Parent root) {
         root.setOpacity(0);
 
-        masterViewport.getChildren().setAll(root);
+        gameRoot.getChildren().setAll(root);
 
         FadeTransition fade = new FadeTransition(
                 TRANSITION_DURATION,
