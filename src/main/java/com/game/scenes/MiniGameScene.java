@@ -10,7 +10,6 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
 public class MiniGameScene extends ModularScene {
@@ -27,8 +26,8 @@ public class MiniGameScene extends ModularScene {
     private String returnNodeIdMedium;
     private String returnNodeIdLow;
 
-    public MiniGameScene(StackPane masterViewport) {
-        super(masterViewport);
+    public MiniGameScene() {
+        super();
     }
 
     @Override
@@ -144,7 +143,7 @@ public class MiniGameScene extends ModularScene {
         ScenePayload dialoguePayload = new ScenePayload("DIALOGUE", payload.activeHeroId())
                 .withMetadata("STORY_FILE", returnStoryFile)
                 .withMetadata("START_NODE", resolvedNodeId);
-        SceneDirector.switchScene(new StandardDialogueScene(masterViewport), dialoguePayload);
+        SceneDirector.switchScene(new StandardDialogueScene(), dialoguePayload);
     }
 
     @Override

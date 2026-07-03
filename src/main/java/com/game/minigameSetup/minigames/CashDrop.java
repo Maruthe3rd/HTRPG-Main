@@ -14,8 +14,8 @@ import java.util.List;
 
 public class CashDrop implements MiniGame {
 
-    private static final int WIDTH = 800; //1920
-    private static final int HEIGHT = 600; //1800
+    private static final int WIDTH = 1920; //1920
+    private static final int HEIGHT = 1080; //1800
 
     // --- player ---
     private static final double PLAYER_Y = 40;          // fixed vertical position near the top

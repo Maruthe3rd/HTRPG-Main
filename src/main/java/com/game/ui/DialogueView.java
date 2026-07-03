@@ -128,22 +128,11 @@ public class DialogueView extends StackPane {
         backgroundContainer = new ImageView();
         setBackgroundImage("/images/exampleSceneBG.jpg");
 
-        leftPortraitView = new ImageView();
-        leftPortraitView.setPreserveRatio(true);
-        leftPortraitView.setFitHeight(820);
-        leftPortraitView.setTranslateX(-40);
-        StackPane.setAlignment(leftPortraitView, Pos.BOTTOM_LEFT);
-
-        rightPortraitView = new ImageView();
-        rightPortraitView.setPreserveRatio(true);
-        rightPortraitView.setFitHeight(820);
-        rightPortraitView.setTranslateX(40);
-        StackPane.setAlignment(rightPortraitView, Pos.BOTTOM_RIGHT);
-
         VBox textPanel = new VBox(10);
         textPanel.setStyle(PANEL_BG);
-        textPanel.setMaxWidth(1360);
+        textPanel.setMaxWidth(1000);
         textPanel.setMinHeight(190);
+        textPanel.setMaxHeight(640);
         textPanel.setPadding(new Insets(28, 34, 22, 34));
         StackPane.setAlignment(textPanel, Pos.TOP_CENTER);
         StackPane.setMargin(textPanel, new Insets(110, 0, 0, 0));
@@ -198,9 +187,29 @@ public class DialogueView extends StackPane {
 
         VBox choiceWidget = new VBox(6, upArrow, choiceBox, downArrow);
         choiceWidget.setAlignment(Pos.CENTER);
-        choiceWidget.setTranslateY(350);
+        choiceWidget.setTranslateY(400);
         StackPane.setAlignment(choiceWidget, Pos.BOTTOM_CENTER);
         StackPane.setMargin(choiceWidget, new Insets(0, 0, 46, 0));
+
+
+        leftPortraitView = new ImageView();
+        leftPortraitView.setPreserveRatio(true);
+        leftPortraitView.setFitHeight(820);
+        leftPortraitView.setTranslateX(-175);
+        leftPortraitView.setTranslateY(100);
+        StackPane.setAlignment(leftPortraitView, Pos.BOTTOM_LEFT);
+
+        rightPortraitView = new ImageView();
+        rightPortraitView.setPreserveRatio(true);
+        rightPortraitView.setFitHeight(820);
+        rightPortraitView.setTranslateX(175);
+        rightPortraitView.setTranslateY(100);
+        StackPane.setAlignment(rightPortraitView, Pos.BOTTOM_RIGHT);
+
+        setPortraits("/images/characters/dwarfBig.png","/images/characters/furryBig.png");
+
+        applyPortraitFocus(leftPortraitView, true);
+        applyPortraitFocus(rightPortraitView, true);
 
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.UP) { moveSelection(-1); e.consume(); }
@@ -208,7 +217,7 @@ public class DialogueView extends StackPane {
             else if (e.getCode() == KeyCode.ENTER || e.getCode() == KeyCode.SPACE) { confirmSelection(); e.consume(); }
         });
 
-        this.getChildren().addAll(backgroundContainer, leftPortraitView, rightPortraitView, textPanel, choiceWidget);
+        this.getChildren().addAll(backgroundContainer, textPanel, leftPortraitView, rightPortraitView, choiceWidget);
 
         this.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
@@ -222,6 +231,7 @@ public class DialogueView extends StackPane {
         try {
             Image bg = new Image(getClass().getResourceAsStream(resourcePath));
             backgroundContainer.setImage(bg);
+            backgroundContainer.setTranslateZ(0);
         } catch (Exception e) {
             System.err.println("Failed to load dialogue background asset: " + resourcePath);
         }

@@ -10,6 +10,7 @@ import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -22,12 +23,15 @@ public final class SceneDirector {
 
     private static volatile Stage primaryStage;
     private static volatile ModularScene currentScene;
+    public static StackPane masterViewport;
 
-    private SceneDirector() {
+    private SceneDirector(StackPane masterViewport) {
+        SceneDirector.masterViewport = masterViewport;
     }
 
-    public static void initialize(Stage stage) {
-        primaryStage = Objects.requireNonNull(stage, "stage");
+    public static void initialize(Stage stage, StackPane viewport) {
+        primaryStage = Objects.requireNonNull(stage);
+        masterViewport = Objects.requireNonNull(viewport);
     }
 
     public static void switchScene(ModularScene targetScene, ScenePayload payload) {
@@ -57,10 +61,10 @@ public final class SceneDirector {
             targetScene.init(payload);
             targetScene.buildUI();
 
-            Scene builtScene = targetScene.getScene();
-            Objects.requireNonNull(builtScene, "getScene() returned null after buildUI()");
+            Parent root = targetScene.getRoot();
 
-            installSceneWithFade(builtScene);
+            installSceneWithFade(root);
+
             currentScene = targetScene;
 
             LOGGER.info(() -> "Switched scene to '" + payload.currentSceneFile()
@@ -71,19 +75,19 @@ public final class SceneDirector {
         }
     }
 
-    private static void installSceneWithFade(Scene builtScene) {
-        Parent root = builtScene.getRoot();
+    private static void installSceneWithFade(Parent root) {
+        root.setOpacity(0);
 
-        root.setOpacity(0.0);
-        primaryStage.setScene(builtScene);
-        if (!primaryStage.isShowing()) {
-            primaryStage.show();
-        }
+        masterViewport.getChildren().setAll(root);
 
-        FadeTransition fadeIn = new FadeTransition(TRANSITION_DURATION, root);
-        fadeIn.setFromValue(0.0);
-        fadeIn.setToValue(1.0);
-        fadeIn.play();
+        FadeTransition fade = new FadeTransition(
+                TRANSITION_DURATION,
+                root
+        );
+
+        fade.setFromValue(0);
+        fade.setToValue(1);
+        fade.play();
     }
 
     public static Stage getPrimaryStage() {
