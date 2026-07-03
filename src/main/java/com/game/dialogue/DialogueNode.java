@@ -8,8 +8,11 @@ public class DialogueNode {
     private String backgroundPath;
     private List<DialogueChoice> choices;
 
-    // Optional: a side effect applied as soon as this node is shown, before
-    // any choice is made (e.g. the crowd's reaction sets an opinion flag).
+    private String leftPortrait;
+    private String rightPortrait;
+
+    private String activeSide;
+
     private String triggerAction;
     private String actionParameter;
 
@@ -30,4 +33,13 @@ public class DialogueNode {
 
     public String getActionParameter() { return actionParameter; }
     public void setActionParameter(String actionParameter) { this.actionParameter = actionParameter; }
+
+    public String getLeftPortrait() { return leftPortrait; }
+    public void setLeftPortrait(String leftPortrait) { this.leftPortrait = leftPortrait; }
+
+    public String getRightPortrait() { return rightPortrait; }
+    public void setRightPortrait(String rightPortrait) { this.rightPortrait = rightPortrait; }
+
+    public String getActiveSide() { return activeSide; }
+    public void setActiveSide(String activeSide) { this.activeSide = activeSide; }
 }

@@ -13,6 +13,8 @@ import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StandardDialogueScene extends ModularScene {
 
@@ -52,8 +54,7 @@ public class StandardDialogueScene extends ModularScene {
         view = new DialogueView();
 
         if (template == null) {
-            view.setSpeakerName("System");
-            view.setDialogueText("Could not load the story file. Check the console for details.");
+            view.showLine("System", "Could not load the story file. Check the console for details.");
             return view;
         }
 
@@ -80,9 +81,8 @@ public class StandardDialogueScene extends ModularScene {
         DialogueNode node = (nodeId != null) ? template.getNodes().get(nodeId) : null;
 
         if (node == null) {
-            view.setSpeakerName("");
-            view.setDialogueText("(End of this branch — no further content written yet.)");
-            view.clearChoices();
+            view.showLine("", "(End of this branch — no further content written yet.)");
+            view.setChoices(new ArrayList<>());
             return;
         }
 
@@ -97,18 +97,19 @@ public class StandardDialogueScene extends ModularScene {
             view.setBackgroundImage(node.getBackgroundPath());
         }
 
-        view.setSpeakerName(node.getSpeaker());
-        view.setDialogueText(node.getText());
-        view.clearChoices();
+        view.setPortraits(node.getLeftPortrait(), node.getRightPortrait());
+        view.setActiveSide(node.getActiveSide());
+        view.showLine(node.getSpeaker(), node.getText());
 
+        List<DialogueView.ChoiceOption> options = new ArrayList<>();
         if (node.getChoices() == null || node.getChoices().isEmpty()) {
-            view.addChoiceButton("(End of prologue)", () -> {}, false);
-            return;
+            options.add(new DialogueView.ChoiceOption("(End of prologue)", () -> {}, false));
+        } else {
+            for (DialogueChoice choice : node.getChoices()) {
+                options.add(new DialogueView.ChoiceOption(choice.getText(), () -> handleChoice(choice), true));
+            }
         }
-
-        for (DialogueChoice choice : node.getChoices()) {
-            view.addChoiceButton(choice.getText(), () -> handleChoice(choice), true);
-        }
+        view.setChoices(options);
     }
 
     private void handleChoice(DialogueChoice choice) {

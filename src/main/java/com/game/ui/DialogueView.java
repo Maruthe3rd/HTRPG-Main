@@ -3,15 +3,21 @@ package com.game.ui;
 import com.game.scenes.MainMenuScene;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DialogueView extends StackPane {
+    
     public static Font BBTitle = Font.loadFont(
             MainMenuScene.class.getResource("/fonts/pixel/MxPlus_ToshibaTxL1_8x16.ttf").toExternalForm(),
             150);
@@ -24,94 +30,192 @@ public class DialogueView extends StackPane {
             ? Font.font(BBTiverent.getFamily(), 26)
             : Font.font("Monospace", 26);
     private static final Font BODY_FONT = (BBTiverent != null)
-            ? Font.font(BBTiverent.getFamily(), 20)
-            : Font.font("Monospace", 20);
+            ? Font.font(BBTiverent.getFamily(), 22)
+            : Font.font("Monospace", 22);
+    private static final Font CHOICE_INDEX_FONT = (BBTiverent != null)
+            ? Font.font(BBTiverent.getFamily(), 22)
+            : Font.font("Monospace", 22);
     private static final Font CHOICE_FONT = (BBTiverent != null)
             ? Font.font(BBTiverent.getFamily(), 20)
             : Font.font("Monospace", 20);
+    private static final Font ARROW_FONT = (BBTiverent != null)
+            ? Font.font(BBTiverent.getFamily(), 20)
+            : Font.font("Monospace", 20);
+
+    private static final String ACCENT_GREEN = "#00FF66";
+    private static final String ACCENT_GREEN_DIM = "#4F9E6C";
+    private static final String ACCENT_UNDERLINE = "#39B6FF";
 
     private static final String PANEL_BG =
-            "-fx-background-color: rgba(0,0,0,0.78); -fx-background-radius: 8;";
+            "-fx-background-color: rgba(10,12,10,0.72); -fx-background-radius: 22;";
 
-    private static final String CHOICE_STYLE =
-            "-fx-background-color: rgba(0,0,0,0.7);" +
-                    "-fx-text-fill: #00FF66;" +
-                    "-fx-border-color: #00FF66;" +
-                    "-fx-border-width: 2;" +
-                    "-fx-background-radius: 4;" +
-                    "-fx-border-radius: 4;" +
-                    "-fx-padding: 12 20 12 20;";
+    private static final String CURRENT_LINE_STYLE =
+            "-fx-border-color: transparent transparent " + ACCENT_UNDERLINE + " transparent;" +
+                    "-fx-border-width: 0 0 2 0;" +
+                    "-fx-padding: 0 4 8 4;";
 
-    private static final String CHOICE_STYLE_HOVER =
-            "-fx-background-color: rgba(0,80,40,0.85);" +
-                    "-fx-text-fill: #FFFFFF;" +
-                    "-fx-border-color: #00FF66;" +
+    private static final String CHOICE_BOX_STYLE =
+            "-fx-background-color: rgba(0,0,0,0.72);" +
+                    "-fx-border-color: " + ACCENT_GREEN + ";" +
                     "-fx-border-width: 2;" +
-                    "-fx-background-radius: 4;" +
-                    "-fx-border-radius: 4;" +
-                    "-fx-padding: 12 20 12 20;";
+                    "-fx-background-radius: 10;" +
+                    "-fx-border-radius: 10;" +
+                    "-fx-padding: 14 26 14 26;";
 
-    private static final String CHOICE_STYLE_LOCKED =
-            "-fx-background-color: rgba(0,0,0,0.4);" +
-                    "-fx-text-fill: #666666;" +
-                    "-fx-border-color: #444444;" +
+    private static final String CHOICE_BOX_STYLE_HOVER =
+            "-fx-background-color: rgba(0,70,35,0.82);" +
+                    "-fx-border-color: " + ACCENT_GREEN + ";" +
                     "-fx-border-width: 2;" +
-                    "-fx-background-radius: 4;" +
-                    "-fx-border-radius: 4;" +
-                    "-fx-padding: 12 20 12 20;";
+                    "-fx-background-radius: 10;" +
+                    "-fx-border-radius: 10;" +
+                    "-fx-padding: 14 26 14 26;";
+
+    private static final String CHOICE_BOX_STYLE_LOCKED =
+            "-fx-background-color: rgba(0,0,0,0.45);" +
+                    "-fx-border-color: #555555;" +
+                    "-fx-border-width: 2;" +
+                    "-fx-background-radius: 10;" +
+                    "-fx-border-radius: 10;" +
+                    "-fx-padding: 14 26 14 26;";
+
+    private static final String ARROW_STYLE =
+            "-fx-background-color: transparent; -fx-text-fill: " + ACCENT_GREEN + "; -fx-cursor: hand;";
+
+    private static final String ARROW_STYLE_DISABLED =
+            "-fx-background-color: transparent; -fx-text-fill: #444444;";
+
+    public static class ChoiceOption {
+        private final String text;
+        private final Runnable onSelect;
+        private final boolean unlocked;
+
+        public ChoiceOption(String text, Runnable onSelect, boolean unlocked) {
+            this.text = text;
+            this.onSelect = onSelect;
+            this.unlocked = unlocked;
+        }
+
+        public String getText() { return text; }
+        public Runnable getOnSelect() { return onSelect; }
+        public boolean isUnlocked() { return unlocked; }
+    }
 
     private final ImageView backgroundContainer;
-    private final Label speakerLabel;
-    private final Label dialogueLabel;
-    private final VBox choiceContainer;
-    private final StackPane textOverlayBox;
+    private final ImageView leftPortraitView;
+    private final ImageView rightPortraitView;
+
+    private final TextFlow previousFlow;
+    private final VBox currentLineBox;
+    private final TextFlow currentFlow;
+
+    private final javafx.scene.control.Label choiceIndexLabel;
+    private final TextFlow choiceTextFlow;
+    private final Text choiceTextNode;
+    private final StackPane choiceBox;
+    private final javafx.scene.control.Button upArrow;
+    private final javafx.scene.control.Button downArrow;
+
+    private String previousSpeaker;
+    private String previousText;
+
+    private List<ChoiceOption> choices = new ArrayList<>();
+    private int selectedChoiceIndex = 0;
 
     public DialogueView() {
-        setStyle("-fx-background-color: #101010;"); // fallback so it's never blank grey
+        setStyle("-fx-background-color: #101010;");
+        setFocusTraversable(true);
 
         backgroundContainer = new ImageView();
-        backgroundContainer.setFitWidth(1920);
-        backgroundContainer.setFitHeight(1080);
-        backgroundContainer.setPreserveRatio(false);
+        setBackgroundImage("/images/exampleSceneBG.jpg");
 
-        VBox bottomLayout = new VBox(15);
-        bottomLayout.setAlignment(Pos.BOTTOM_CENTER);
-        bottomLayout.setPadding(new Insets(40));
-        bottomLayout.setMaxWidth(1600);
+        leftPortraitView = new ImageView();
+        leftPortraitView.setPreserveRatio(true);
+        leftPortraitView.setFitHeight(820);
+        leftPortraitView.setTranslateX(-40);
+        StackPane.setAlignment(leftPortraitView, Pos.BOTTOM_LEFT);
 
-        choiceContainer = new VBox(10);
-        choiceContainer.setAlignment(Pos.CENTER);
-        choiceContainer.setFillWidth(true);
-        choiceContainer.setMaxWidth(1600);
+        rightPortraitView = new ImageView();
+        rightPortraitView.setPreserveRatio(true);
+        rightPortraitView.setFitHeight(820);
+        rightPortraitView.setTranslateX(40);
+        StackPane.setAlignment(rightPortraitView, Pos.BOTTOM_RIGHT);
 
-        textOverlayBox = new StackPane();
-        textOverlayBox.setStyle(PANEL_BG);
-        textOverlayBox.setMinHeight(200);
-        textOverlayBox.setMaxWidth(1600);
+        VBox textPanel = new VBox(10);
+        textPanel.setStyle(PANEL_BG);
+        textPanel.setMaxWidth(1360);
+        textPanel.setMinHeight(190);
+        textPanel.setPadding(new Insets(28, 34, 22, 34));
+        StackPane.setAlignment(textPanel, Pos.TOP_CENTER);
+        StackPane.setMargin(textPanel, new Insets(110, 0, 0, 0));
 
-        VBox textStack = new VBox(10);
-        textStack.setAlignment(Pos.TOP_LEFT);
-        textStack.setPadding(new Insets(25));
-        textStack.setMaxWidth(1550);
+        previousFlow = new TextFlow();
+        previousFlow.setMaxWidth(1290);
+        previousFlow.setOpacity(0.5);
+        previousFlow.setManaged(false);
+        previousFlow.setVisible(false);
 
-        speakerLabel = new Label();
-        speakerLabel.setFont(SPEAKER_FONT);
-        speakerLabel.setTextFill(Color.web("#00FF66"));
+        currentFlow = new TextFlow();
+        currentFlow.setMaxWidth(1290);
 
-        dialogueLabel = new Label();
-        dialogueLabel.setFont(BODY_FONT);
-        dialogueLabel.setTextFill(Color.WHITE);
-        dialogueLabel.setWrapText(true);
-        dialogueLabel.setMaxWidth(1550);
+        currentLineBox = new VBox(currentFlow);
+        currentLineBox.setStyle(CURRENT_LINE_STYLE);
 
-        textStack.getChildren().addAll(speakerLabel, dialogueLabel);
-        textOverlayBox.getChildren().add(textStack);
+        textPanel.getChildren().addAll(previousFlow, currentLineBox);
 
-        bottomLayout.getChildren().addAll(choiceContainer, textOverlayBox);
+        upArrow = new javafx.scene.control.Button("\u25B2");
+        upArrow.setFont(ARROW_FONT);
+        upArrow.setStyle(ARROW_STYLE);
+        upArrow.setFocusTraversable(false);
+        upArrow.setOnAction(e -> moveSelection(-1));
 
-        StackPane.setAlignment(bottomLayout, Pos.BOTTOM_CENTER);
+        downArrow = new javafx.scene.control.Button("\u25BC");
+        downArrow.setFont(ARROW_FONT);
+        downArrow.setStyle(ARROW_STYLE);
+        downArrow.setFocusTraversable(false);
+        downArrow.setOnAction(e -> moveSelection(1));
 
-        this.getChildren().addAll(backgroundContainer, bottomLayout);
+        choiceIndexLabel = new javafx.scene.control.Label();
+        choiceIndexLabel.setFont(CHOICE_INDEX_FONT);
+        choiceIndexLabel.setTextFill(Color.web(ACCENT_GREEN));
+
+        choiceTextNode = new Text();
+        choiceTextNode.setFont(CHOICE_FONT);
+        choiceTextNode.setFill(Color.web(ACCENT_GREEN));
+
+        choiceTextFlow = new TextFlow(choiceTextNode);
+        choiceTextFlow.setMaxWidth(620);
+
+        HBox choiceRow = new HBox(14, choiceIndexLabel, choiceTextFlow);
+        choiceRow.setAlignment(Pos.CENTER_LEFT);
+
+        choiceBox = new StackPane(choiceRow);
+        choiceBox.setStyle(CHOICE_BOX_STYLE);
+        choiceBox.setMaxWidth(760);
+        choiceBox.setCursor(javafx.scene.Cursor.HAND);
+        choiceBox.setOnMouseEntered(e -> refreshChoiceBoxStyle(true));
+        choiceBox.setOnMouseExited(e -> refreshChoiceBoxStyle(false));
+        choiceBox.setOnMouseClicked(e -> confirmSelection());
+
+        VBox choiceWidget = new VBox(6, upArrow, choiceBox, downArrow);
+        choiceWidget.setAlignment(Pos.CENTER);
+        choiceWidget.setTranslateY(350);
+        StackPane.setAlignment(choiceWidget, Pos.BOTTOM_CENTER);
+        StackPane.setMargin(choiceWidget, new Insets(0, 0, 46, 0));
+
+        setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.UP) { moveSelection(-1); e.consume(); }
+            else if (e.getCode() == KeyCode.DOWN) { moveSelection(1); e.consume(); }
+            else if (e.getCode() == KeyCode.ENTER || e.getCode() == KeyCode.SPACE) { confirmSelection(); e.consume(); }
+        });
+
+        this.getChildren().addAll(backgroundContainer, leftPortraitView, rightPortraitView, textPanel, choiceWidget);
+
+        this.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.getRoot().requestFocus();
+                requestFocus();
+            }
+        });
     }
 
     public void setBackgroundImage(String resourcePath) {
@@ -123,42 +227,155 @@ public class DialogueView extends StackPane {
         }
     }
 
-    public void setSpeakerName(String name) {
-        speakerLabel.setText(name != null ? name.toUpperCase() : "");
+    public void setPortraits(String leftResourcePath, String rightResourcePath) {
+        if (leftResourcePath != null) {
+            setPortraitImage(leftPortraitView, leftResourcePath);
+        }
+        if (rightResourcePath != null) {
+            setPortraitImage(rightPortraitView, rightResourcePath);
+        }
     }
 
-    public void setDialogueText(String currentVisibleText) {
-        dialogueLabel.setText(currentVisibleText);
+    private void setPortraitImage(ImageView target, String resourcePath) {
+        try {
+            Image img = new Image(getClass().getResourceAsStream(resourcePath));
+            target.setImage(img);
+        } catch (Exception e) {
+            System.err.println("Failed to load portrait asset: " + resourcePath);
+        }
     }
 
-    public void clearChoices() {
-        choiceContainer.getChildren().clear();
+    public void setActiveSide(String side) {
+        boolean leftActive = "LEFT".equalsIgnoreCase(side);
+        boolean rightActive = "RIGHT".equalsIgnoreCase(side);
+        boolean anyoneActive = leftActive || rightActive;
+
+        applyPortraitFocus(leftPortraitView, !anyoneActive || leftActive);
+        applyPortraitFocus(rightPortraitView, !anyoneActive || rightActive);
     }
 
-    public void addChoiceButton(String text, Runnable onSelectAction, boolean isUnlocked) {
-        Button choiceBtn = new Button(text);
-        choiceBtn.setMaxWidth(Double.MAX_VALUE);
-        choiceBtn.setMinHeight(50);
-        choiceBtn.setWrapText(true);
-        choiceBtn.setFont(CHOICE_FONT);
-        choiceBtn.setAlignment(Pos.CENTER);
-
-        if (isUnlocked) {
-            choiceBtn.setStyle(CHOICE_STYLE);
-            choiceBtn.setOnMouseEntered(e -> choiceBtn.setStyle(CHOICE_STYLE_HOVER));
-            choiceBtn.setOnMouseExited(e -> choiceBtn.setStyle(CHOICE_STYLE));
-            choiceBtn.setOnAction(e -> onSelectAction.run());
+    private void applyPortraitFocus(ImageView portrait, boolean active) {
+        if (active) {
+            portrait.setEffect(null);
+            portrait.setOpacity(1.0);
         } else {
-            choiceBtn.setText("[LOCKED] " + text);
-            choiceBtn.setDisable(true);
-            choiceBtn.setStyle(CHOICE_STYLE_LOCKED);
+            ColorAdjust dim = new ColorAdjust();
+            dim.setSaturation(-0.6);
+            dim.setBrightness(-0.25);
+            portrait.setEffect(dim);
+            portrait.setOpacity(0.55);
+        }
+    }
+
+    public void showLine(String speaker, String text) {
+        if (previousSpeaker != null || previousText != null) {
+            previousFlow.getChildren().setAll(buildLineNodes(previousSpeaker, previousText, false));
+            previousFlow.setManaged(true);
+            previousFlow.setVisible(true);
+        } else {
+            previousFlow.getChildren().clear();
+            previousFlow.setManaged(false);
+            previousFlow.setVisible(false);
         }
 
-        VBox.setVgrow(choiceBtn, Priority.NEVER);
-        choiceContainer.getChildren().add(choiceBtn);
+        currentFlow.getChildren().setAll(buildLineNodes(speaker, text, true));
+
+        previousSpeaker = speaker;
+        previousText = text;
     }
 
-    public StackPane getTextOverlayBox() {
-        return textOverlayBox;
+    public void resetHistory() {
+        previousSpeaker = null;
+        previousText = null;
+        previousFlow.getChildren().clear();
+        previousFlow.setManaged(false);
+        previousFlow.setVisible(false);
+    }
+
+    private List<Text> buildLineNodes(String speaker, String text, boolean current) {
+        List<Text> nodes = new ArrayList<>();
+
+        if (speaker != null && !speaker.isEmpty()) {
+            Text speakerText = new Text(speaker.toUpperCase() + ":  ");
+            speakerText.setFont(SPEAKER_FONT);
+            speakerText.setFill(Color.web(current ? ACCENT_GREEN : ACCENT_GREEN_DIM));
+            speakerText.setStyle("-fx-font-weight: bold;");
+            nodes.add(speakerText);
+        }
+
+        Text bodyText = new Text(text != null ? text : "");
+        bodyText.setFont(BODY_FONT);
+        bodyText.setFill(Color.web(current ? ACCENT_GREEN : ACCENT_GREEN_DIM));
+        nodes.add(bodyText);
+
+        return nodes;
+    }
+    
+    public void setChoices(List<ChoiceOption> newChoices) {
+        this.choices = new ArrayList<>(newChoices);
+        this.selectedChoiceIndex = 0;
+        renderSelection();
+    }
+
+    private void moveSelection(int delta) {
+        if (choices.isEmpty()) return;
+        int size = choices.size();
+        selectedChoiceIndex = ((selectedChoiceIndex + delta) % size + size) % size;
+        renderSelection();
+    }
+
+    private void confirmSelection() {
+        if (choices.isEmpty()) return;
+        ChoiceOption selected = choices.get(selectedChoiceIndex);
+        if (selected.isUnlocked() && selected.getOnSelect() != null) {
+            selected.getOnSelect().run();
+        }
+    }
+
+    private void renderSelection() {
+        boolean hasMultiple = choices.size() > 1;
+        upArrow.setVisible(hasMultiple);
+        upArrow.setManaged(hasMultiple);
+        downArrow.setVisible(hasMultiple);
+        downArrow.setManaged(hasMultiple);
+        upArrow.setDisable(!hasMultiple);
+        downArrow.setDisable(!hasMultiple);
+        upArrow.setStyle(hasMultiple ? ARROW_STYLE : ARROW_STYLE_DISABLED);
+        downArrow.setStyle(hasMultiple ? ARROW_STYLE : ARROW_STYLE_DISABLED);
+
+        if (choices.isEmpty()) {
+            choiceIndexLabel.setText("");
+            choiceTextNode.setText("");
+            choiceBox.setVisible(false);
+            return;
+        }
+
+        choiceBox.setVisible(true);
+        ChoiceOption current = choices.get(selectedChoiceIndex);
+        choiceIndexLabel.setText((selectedChoiceIndex + 1) + "/" + choices.size() + ":");
+
+        if (current.isUnlocked()) {
+            choiceTextNode.setText(current.getText());
+            choiceTextNode.setFill(Color.web(ACCENT_GREEN));
+            choiceIndexLabel.setTextFill(Color.web(ACCENT_GREEN));
+            choiceBox.setCursor(javafx.scene.Cursor.HAND);
+        } else {
+            choiceTextNode.setText("[LOCKED] " + current.getText());
+            choiceTextNode.setFill(Color.web("#777777"));
+            choiceIndexLabel.setTextFill(Color.web("#777777"));
+            choiceBox.setCursor(javafx.scene.Cursor.DEFAULT);
+        }
+
+        refreshChoiceBoxStyle(false);
+    }
+
+    private void refreshChoiceBoxStyle(boolean hovering) {
+        if (choices.isEmpty()) return;
+        boolean unlocked = choices.get(selectedChoiceIndex).isUnlocked();
+        if (!unlocked) {
+            choiceBox.setStyle(CHOICE_BOX_STYLE_LOCKED);
+        } else {
+            choiceBox.setStyle(hovering ? CHOICE_BOX_STYLE_HOVER : CHOICE_BOX_STYLE);
+        }
     }
 }
