@@ -9,7 +9,6 @@ import com.game.dialogue.DialogueNode;
 import com.game.dialogue.DialogueTemplate;
 import com.game.ui.DialogueView;
 import javafx.scene.Parent;
-import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +24,8 @@ public class StandardDialogueScene extends ModularScene {
     private DialogueView view;
     private String storyFile; // kept so we can hand it back to ourselves after a minigame
 
-    public StandardDialogueScene(StackPane masterViewport) {
-        super(masterViewport);
+    public StandardDialogueScene() {
+        super();
     }
 
     @Override
@@ -123,12 +122,12 @@ public class StandardDialogueScene extends ModularScene {
                     .withMetadata("RETURN_NODE_ID_HIGH", choice.getTargetNodeIdHigh())
                     .withMetadata("RETURN_NODE_ID_MEDIUM", choice.getTargetNodeIdMedium())
                     .withMetadata("RETURN_NODE_ID_LOW", choice.getTargetNodeIdLow());
-            SceneDirector.switchScene(new MiniGameScene(masterViewport), minigamePayload);
+            SceneDirector.switchScene(new MiniGameScene(), minigamePayload);
         } else if (choice.getTargetStoryFile() != null) {
             ScenePayload nextChapterPayload = new ScenePayload("DIALOGUE", payload.activeHeroId())
                     .withMetadata("STORY_FILE", choice.getTargetStoryFile())
                     .withMetadata("START_NODE", choice.getTargetNodeId());
-            SceneDirector.switchScene(new StandardDialogueScene(masterViewport), nextChapterPayload);
+            SceneDirector.switchScene(new StandardDialogueScene(), nextChapterPayload);
         } else {
             showNode(choice.getTargetNodeId());
         }

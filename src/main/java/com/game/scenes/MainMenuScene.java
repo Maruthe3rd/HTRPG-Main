@@ -24,8 +24,8 @@ public class MainMenuScene extends ModularScene {
             75);
 
 
-    public MainMenuScene(StackPane masterViewport) {
-        super(masterViewport);
+    public MainMenuScene() {
+        super();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class MainMenuScene extends ModularScene {
 
         Label btnBegin = createMenuOption("Begin", () -> {
             ScenePayload charCreatorPayload = new ScenePayload("CHAR_CREATOR", payload.activeHeroId());
-            SceneDirector.switchScene(new CharCreatorScene(masterViewport), charCreatorPayload);
+            SceneDirector.switchScene(new CharCreatorScene(), charCreatorPayload);
         });
 
         Label btnResume = createMenuOption("Resume", () -> {

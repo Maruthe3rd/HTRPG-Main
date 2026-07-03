@@ -35,8 +35,8 @@ public class CharCreatorScene extends ModularScene {
     private List<StackPane> cards;
     private List<StackPane> portraitStacks; // rectangle + portrait image, animated together
 
-    public CharCreatorScene(StackPane masterViewport) {
-        super(masterViewport);
+    public CharCreatorScene() {
+        super();
     }
 
     @Override
@@ -183,7 +183,7 @@ public class CharCreatorScene extends ModularScene {
         if (storyFile != null) {
             ScenePayload dialoguePayload = new ScenePayload("DIALOGUE_SCENE", payload.activeHeroId())
                     .withMetadata("STORY_FILE", storyFile);
-            SceneDirector.switchScene(new StandardDialogueScene(masterViewport), dialoguePayload);
+            SceneDirector.switchScene(new StandardDialogueScene(), dialoguePayload);
         } else {
             System.out.println("No story file wired up for '" + chosenRace + "' yet.");
         }
