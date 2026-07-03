@@ -66,6 +66,7 @@ public class PolicySwiper implements MiniGame {
     private double cardOffsetX = 0;
     private double cardRotation = 0;
     private double cardAlpha = 1;
+    private String resultTier = "LOW";
 
     private int acceptedCount = 0;
     private int rejectedCount = 0;
@@ -103,6 +104,10 @@ public class PolicySwiper implements MiniGame {
 
     @Override
     public boolean isFinished() {
+        if (getAcceptedCount() + getRejectedCount() == policies.size()) {
+            finished = true;
+            resultTier = getResultTier();
+        }
         return finished;
     }
 
