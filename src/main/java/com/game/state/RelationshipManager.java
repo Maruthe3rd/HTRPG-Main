@@ -25,7 +25,7 @@ public final class RelationshipManager {
         this.databaseManager = Objects.requireNonNull(databaseManager, "databaseManager");
     }
 
-    public void adjustAffection(String npcId, int delta) throws Throwable {
+    public void adjustAffection(String npcId, int delta) {
         Objects.requireNonNull(npcId, "npcId");
         String sql = """
                 INSERT INTO relationships (npc_id, affection_level)
@@ -44,7 +44,7 @@ public final class RelationshipManager {
         }
     }
 
-    public int getAffection(String npcId) throws Throwable {
+    public int getAffection(String npcId) {
         Objects.requireNonNull(npcId, "npcId");
         String sql = "SELECT affection_level FROM relationships WHERE npc_id = ?";
         synchronized (operationLock) {
@@ -59,7 +59,7 @@ public final class RelationshipManager {
         }
     }
 
-    public void markMetInPreviousRun(String npcId, boolean met) throws Throwable {
+    public void markMetInPreviousRun(String npcId, boolean met) {
         Objects.requireNonNull(npcId, "npcId");
         String sql = """
                 INSERT INTO relationships (npc_id, met_in_previous_run)
@@ -77,7 +77,7 @@ public final class RelationshipManager {
         }
     }
 
-    public boolean hasMetInPreviousRun(String npcId) throws Throwable {
+    public boolean hasMetInPreviousRun(String npcId) {
         Objects.requireNonNull(npcId, "npcId");
         String sql = "SELECT met_in_previous_run FROM relationships WHERE npc_id = ?";
         synchronized (operationLock) {
@@ -96,8 +96,8 @@ public final class RelationshipManager {
         return databaseManager.getConnection();
     }
 
-    private static Throwable wrap(String action, SQLException cause) {
+    private static GameStateException wrap(String action, SQLException cause) {
         LOGGER.log(Level.SEVERE, "Database error while " + action, cause);
-        return new Throwable("Database error while " + action, cause);
+        return new GameStateException("Database error while " + action, cause);
     }
 }

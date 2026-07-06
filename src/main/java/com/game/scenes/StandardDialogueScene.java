@@ -20,6 +20,9 @@ public class StandardDialogueScene extends ModularScene {
 
     private static final String DEFAULT_STORY_FILE = "/story/Dragonborn/prologueDB.json";
 
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     private DialogueTemplate template;
     private String currentNodeId;
     private DialogueView view;
@@ -68,9 +71,7 @@ public class StandardDialogueScene extends ModularScene {
                 System.err.println("Story file not found on classpath: " + resourcePath);
                 return null;
             }
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return mapper.readValue(in, DialogueTemplate.class);
+            return MAPPER.readValue(in, DialogueTemplate.class);
         } catch (IOException e) {
             System.err.println("Failed to parse story file '" + resourcePath + "': " + e.getMessage());
             return null;
@@ -79,6 +80,13 @@ public class StandardDialogueScene extends ModularScene {
 
     private void showNode(String nodeId) {
         DialogueNode node = (nodeId != null) ? template.getNodes().get(nodeId) : null;
+
+        if (node == null) {
+            System.err.println("Dialogue node not found in '" + storyFile + "': " + nodeId);
+            view.showLine("System", "Missing dialogue node: " + nodeId);
+            view.setChoices(new ArrayList<>());
+            return;
+        }
 
         if (node.getChoices() == null || node.getChoices().isEmpty()) {
             if (node.getBackgroundPath() != null) view.setBackgroundImage(node.getBackgroundPath());

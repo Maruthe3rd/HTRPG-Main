@@ -138,12 +138,14 @@ public class PolicySwiper implements MiniGame {
 
     @Override
     public void onKeyPress(KeyEvent e) {
+        if (swiping || finished) return; // ignore input mid-animation so opinion isn't counted twice
+
         if (e.getCode() == KeyCode.LEFT) {
-            startSwipe(-1); // reject
             publicOpinion -= policies.get(currentIndex).approvalEffect();
+            startSwipe(-1); // reject
         } else if (e.getCode() == KeyCode.RIGHT) {
-            startSwipe(1);  // accept
             publicOpinion += policies.get(currentIndex).approvalEffect();
+            startSwipe(1);  // accept
         }
     }
 
@@ -258,10 +260,11 @@ public class PolicySwiper implements MiniGame {
         gc.fillText("\u2713", CHECK_BUTTON_X, CHECK_BUTTON_Y + 4);
     }
 
+    private final Text measurer = new Text(); // reused across frames to avoid per-frame allocation
+
     /** Splits text into lines that fit within maxWidth, using the given font for measurement. */
     private List<String> wrapText(String text, Font font, double maxWidth) {
         List<String> lines = new ArrayList<>();
-        Text measurer = new Text();
         measurer.setFont(font);
 
         StringBuilder currentLine = new StringBuilder();

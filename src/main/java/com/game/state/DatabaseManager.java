@@ -29,49 +29,6 @@ public final class DatabaseManager {
             "inventory"
     };
 
-    private static final String SCHEMA_SCRIPT = """
-            CREATE TABLE IF NOT EXISTS meta_timeline_flags (
-                flag_key TEXT PRIMARY KEY,
-                flag_value BOOLEAN NOT NULL DEFAULT 0,
-                description TEXT
-            );
-            
-            CREATE TABLE IF NOT EXISTS playthrough_history (
-                run_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                character_name TEXT NOT NULL,
-                play_order INTEGER NOT NULL,
-                achieved_end TEXT NOT NULL,
-                run_completed BOOLEAN DEFAULT 0
-            );
-            
-            CREATE TABLE IF NOT EXISTS paths_choices (
-                choice_id TEXT PRIMARY KEY,
-                character_who_made_it TEXT NOT NULL,
-                choice_value TEXT NOT NULL,
-                impacts_future_runs BOOLEAN DEFAULT 1
-            );
-            
-            CREATE TABLE IF NOT EXISTS hero_state (
-                hero_id TEXT PRIMARY KEY,
-                current_health INTEGER DEFAULT 100,
-                current_mana INTEGER DEFAULT 100,
-                last_known_scene TEXT
-            );
-            
-            CREATE TABLE IF NOT EXISTS relationships (
-                npc_id TEXT PRIMARY KEY,
-                affection_level INTEGER DEFAULT 0,
-                met_in_previous_run BOOLEAN DEFAULT 0
-            );
-            
-            CREATE TABLE IF NOT EXISTS inventory (
-                item_id TEXT PRIMARY KEY,
-                item_name TEXT NOT NULL,
-                quantity INTEGER DEFAULT 1,
-                transcends_timeline BOOLEAN DEFAULT 0
-            );
-            """;
-
     private static final class Holder {
         private static final DatabaseManager INSTANCE = new DatabaseManager();
     }
@@ -228,8 +185,9 @@ public final class DatabaseManager {
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setString(1, key);
-            ResultSet rs = ps.executeQuery();
-            return rs.next() && rs.getBoolean(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getBoolean(1);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -240,10 +198,10 @@ public final class DatabaseManager {
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setString(1, key);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) return rs.getString(1);
-        } catch (Exception e) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getString(1);
+            }
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
@@ -254,26 +212,6 @@ public final class DatabaseManager {
         public DatabaseInitializationException(String message, Throwable cause) {
             super(message, cause);
         }
-    }
-
-    public String selectNextCharacter(String current) {
-        String sql = """
-        SELECT character_id
-        FROM character_weights
-        ORDER BY weight DESC
-        LIMIT 1
-    """;
-
-        try (PreparedStatement ps = getConnection().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            if (rs.next()) return rs.getString(1);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
     }
 
     private String loadSchemaScript() {

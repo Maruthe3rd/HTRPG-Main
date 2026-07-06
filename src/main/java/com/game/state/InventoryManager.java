@@ -23,7 +23,7 @@ public final class InventoryManager {
         this.databaseManager = Objects.requireNonNull(databaseManager, "databaseManager");
     }
 
-    public void addItem(String itemId, String name, int qty, boolean transcends) throws Throwable {
+    public void addItem(String itemId, String name, int qty, boolean transcends) {
         Objects.requireNonNull(itemId, "itemId");
         Objects.requireNonNull(name, "name");
         String sql = """
@@ -46,7 +46,7 @@ public final class InventoryManager {
         }
     }
 
-    public boolean hasItem(String itemId) throws Throwable {
+    public boolean hasItem(String itemId) {
         Objects.requireNonNull(itemId, "itemId");
         String sql = "SELECT 1 FROM inventory WHERE item_id = ? AND quantity > 0 LIMIT 1";
         synchronized (operationLock) {
@@ -61,7 +61,7 @@ public final class InventoryManager {
         }
     }
 
-    public int getQuantity(String itemId) throws Throwable {
+    public int getQuantity(String itemId) {
         Objects.requireNonNull(itemId, "itemId");
         String sql = "SELECT quantity FROM inventory WHERE item_id = ?";
         synchronized (operationLock) {
@@ -76,7 +76,7 @@ public final class InventoryManager {
         }
     }
 
-    public void removeItem(String itemId, int qty) throws Throwable {
+    public void removeItem(String itemId, int qty) {
         Objects.requireNonNull(itemId, "itemId");
         String sql = "UPDATE inventory SET quantity = MAX(0, quantity - ?) WHERE item_id = ?";
         synchronized (operationLock) {
@@ -90,7 +90,7 @@ public final class InventoryManager {
         }
     }
 
-    public void clearCurrentTimelineItems() throws Throwable {
+    public void clearCurrentTimelineItems() {
         String sql = "DELETE FROM inventory WHERE transcends_timeline = 0";
         synchronized (operationLock) {
             try (PreparedStatement ps = connection().prepareStatement(sql)) {
@@ -106,8 +106,8 @@ public final class InventoryManager {
         return databaseManager.getConnection();
     }
 
-    private static Throwable wrap(String action, SQLException cause) {
+    private static GameStateException wrap(String action, SQLException cause) {
         LOGGER.log(Level.SEVERE, "Database error while " + action, cause);
-        return new Throwable("Database error while " + action, cause);
+        return new GameStateException("Database error while " + action, cause);
     }
 }
