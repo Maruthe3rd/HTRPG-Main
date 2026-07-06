@@ -1,7 +1,9 @@
 package com.game.scenes;
 
+import com.game.core.GameCharacter;
 import com.game.core.SceneDirector;
 import com.game.core.ScenePayload;
+import com.game.state.DatabaseManager;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -62,12 +64,19 @@ public class MainMenuScene extends ModularScene {
         buttonBox.setAlignment(Pos.CENTER);
 
         Label btnBegin = createMenuOption("Begin", () -> {
-            ScenePayload charCreatorPayload = new ScenePayload("CHAR_CREATOR", payload.activeHeroId());
-            SceneDirector.switchScene(new CharCreatorScene(), charCreatorPayload);
+            // If every character has already been played, the selection would be
+            // entirely greyed out — send the player to the final overview instead.
+            if (allCharactersCompleted()) {
+                SceneDirector.switchScene(new FinalEndScene(), new ScenePayload("FINAL_END", "unassigned"));
+            } else {
+                ScenePayload charCreatorPayload = new ScenePayload("CHAR_CREATOR", payload.activeHeroId());
+                SceneDirector.switchScene(new CharCreatorScene(), charCreatorPayload);
+            }
         });
 
         Label btnResume = createMenuOption("Resume", () -> {
-            System.out.println("Load Game feature not yet implemented.");
+            ScenePayload continuePayload = new ScenePayload("CONTINUE", payload.activeHeroId());
+            SceneDirector.switchScene(new ContinueScene(), continuePayload);
         });
 
         Label btnExit = createMenuOption("Exit", () -> {
@@ -84,6 +93,10 @@ public class MainMenuScene extends ModularScene {
         return root;
     }
 
+
+    private boolean allCharactersCompleted() {
+        return GameCharacter.allCompleted(DatabaseManager.getInstance().getCompletedCharacters());
+    }
 
     private Label createMenuOption(String text, Runnable onClickAction) {
         Label label = new Label(text);

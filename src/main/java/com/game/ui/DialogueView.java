@@ -372,14 +372,12 @@ public class DialogueView extends StackPane {
             choiceTextNode.setFill(Color.web(ACCENT_GREEN));
             choiceIndexLabel.setTextFill(Color.web(ACCENT_GREEN));
             choiceBox.setCursor(javafx.scene.Cursor.HAND);
-        }
-        /*else {
+        } else {
             choiceTextNode.setText("[LOCKED] " + current.getText());
             choiceTextNode.setFill(Color.web("#777777"));
             choiceIndexLabel.setTextFill(Color.web("#777777"));
             choiceBox.setCursor(javafx.scene.Cursor.DEFAULT);
         }
-        */
 
         refreshChoiceBoxStyle(false);
     }

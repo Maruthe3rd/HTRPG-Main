@@ -9,6 +9,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -165,20 +169,92 @@ public final class DatabaseManager {
         }
     }
 
-    public void savePlaythrough(String character, String endType) {
+    /**
+     * Records a finished run. {@code play_order} is derived from how many runs
+     * were already completed, and {@code endingKey} is the real ending reached
+     * (e.g. METAKEY_DWARF_GOOD_END) so the end screens can report what happened.
+     */
+    public void savePlaythrough(String character, String endingKey) {
         String sql = """
         INSERT INTO playthrough_history(character_name, play_order, achieved_end, run_completed)
-        VALUES(?, 0, ?, 1)
+        VALUES(?, (SELECT COUNT(*) FROM playthrough_history WHERE run_completed = 1) + 1, ?, 1)
     """;
 
         try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
             ps.setString(1, character);
-            ps.setString(2, endType);
+            ps.setString(2, endingKey);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
+    /** All finished runs, oldest first, for the continue/end overview screens. */
+    public List<PlaythroughRecord> getCompletedPlaythroughs() {
+        String sql = """
+        SELECT character_name, achieved_end, play_order
+        FROM playthrough_history
+        WHERE run_completed = 1
+        ORDER BY run_id
+    """;
+
+        List<PlaythroughRecord> records = new ArrayList<>();
+        try (PreparedStatement ps = getConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                records.add(new PlaythroughRecord(rs.getString(1), rs.getString(2), rs.getInt(3)));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return records;
+    }
+
+    /** Distinct character display-names that have at least one finished run. */
+    public Set<String> getCompletedCharacters() {
+        String sql = "SELECT DISTINCT character_name FROM playthrough_history WHERE run_completed = 1";
+
+        Set<String> characters = new LinkedHashSet<>();
+        try (PreparedStatement ps = getConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                characters.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return characters;
+    }
+
+    /**
+     * Starts a fresh loop: forgets which characters were played so they become
+     * selectable again, while deliberately <em>keeping</em> the meta-timeline
+     * flags — that accumulated memory is what a new play-order builds upon.
+     */
+    public void resetPlaythroughHistory() {
+        try (Statement st = getConnection().createStatement()) {
+            st.executeUpdate("DELETE FROM playthrough_history");
+            LOGGER.info("Playthrough history cleared for a new timeline (meta flags kept).");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean hasCharacterCompleted(String character) {
+        String sql = "SELECT 1 FROM playthrough_history WHERE character_name = ? AND run_completed = 1 LIMIT 1";
+
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, character);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** A finished run: which character, which ending key they reached, and the play order. */
+    public record PlaythroughRecord(String character, String endingKey, int playOrder) {}
 
     public boolean hasMetaFlag(String key) {
         String sql = "SELECT flag_value FROM meta_timeline_flags WHERE flag_key = ?";

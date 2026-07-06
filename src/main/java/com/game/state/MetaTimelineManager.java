@@ -14,9 +14,9 @@ public final class MetaTimelineManager {
 
     public static final String DRAGONBORN = "Dragonborn";
     public static final String DWARF = "Dwarf";
-    public static final String FURRY = "Furry";
 
-    private static final String[] ALL_CHARACTERS = {DRAGONBORN, DWARF, FURRY};
+    // The Furry was written out of the final game; only these two remain playable.
+    private static final String[] ALL_CHARACTERS = {DRAGONBORN, DWARF};
 
     private final DatabaseManager databaseManager;
     private final Object operationLock = new Object();
@@ -123,12 +123,13 @@ public final class MetaTimelineManager {
     }
 
     private boolean haveAllCharactersReachedAnEnd() throws SQLException {
+        String placeholders = String.join(", ", java.util.Collections.nCopies(ALL_CHARACTERS.length, "?"));
         String sql = """
                 SELECT COUNT(DISTINCT character_name)
                 FROM playthrough_history
-                WHERE character_name IN (?, ?, ?)
+                WHERE character_name IN (%s)
                   AND run_completed = 1
-                """;
+                """.formatted(placeholders);
 
         try (PreparedStatement ps = connection().prepareStatement(sql)) {
             for (int i = 0; i < ALL_CHARACTERS.length; i++) {

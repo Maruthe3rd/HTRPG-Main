@@ -1,12 +1,15 @@
 package com.game.scenes;
 
+import com.game.core.GameCharacter;
 import com.game.core.SceneDirector;
 import com.game.core.ScenePayload;
+import com.game.state.DatabaseManager;
 import javafx.animation.ScaleTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -19,11 +22,11 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CharCreatorScene extends ModularScene {
 
-    private static final String[] RACE_IDS   = {"furry", "dwarf", "dragonborn"};
-    private static final String[] RACE_NAMES = {"Furry", "Dwarf", "Dragonborn"};
+    private static final GameCharacter[] ROSTER = GameCharacter.values();
 
     private static final Font CARD_LABEL_FONT = Font.loadFont(
             MainMenuScene.class.getResource("/fonts/pixel/Mx437_ToshibaTxL2_8x8.ttf").toExternalForm(),
@@ -32,6 +35,7 @@ public class CharCreatorScene extends ModularScene {
     private int selectedIndex = 0;
     private List<StackPane> cards;
     private List<StackPane> portraitStacks; // rectangle + portrait image, animated together
+    private boolean[] completed;            // characters already played this loop are locked out
 
     public CharCreatorScene() {
         super();
@@ -70,10 +74,14 @@ public class CharCreatorScene extends ModularScene {
 
         cards = new ArrayList<>();
         portraitStacks = new ArrayList<>();
+        completed = new boolean[ROSTER.length];
 
-        for (int i = 0; i < RACE_IDS.length; i++) {
+        Set<String> completedCharacters = DatabaseManager.getInstance().getCompletedCharacters();
+
+        for (int i = 0; i < ROSTER.length; i++) {
             int index = i; // effectively final for lambdas
-            StackPane card = buildCard(RACE_IDS[i], RACE_NAMES[i], index);
+            completed[i] = completedCharacters.contains(ROSTER[i].displayName());
+            StackPane card = buildCard(ROSTER[i], index);
             cards.add(card);
             cardRow.getChildren().add(card);
         }
@@ -89,70 +97,101 @@ public class CharCreatorScene extends ModularScene {
 
         root.setOnKeyPressed(e -> {
             switch (e.getCode()) {
-                case LEFT -> selectCard((selectedIndex - 1 + RACE_IDS.length) % RACE_IDS.length);
-                case RIGHT -> selectCard((selectedIndex + 1) % RACE_IDS.length);
+                case LEFT -> selectCard(nextSelectable(selectedIndex, -1));
+                case RIGHT -> selectCard(nextSelectable(selectedIndex, +1));
                 case ENTER, SPACE -> confirmSelection();
                 default -> {}
             }
         });
 
-        selectCard(0); // default highlight
+        selectCard(firstSelectable()); // default highlight on the first still-playable character
         return root;
     }
 
-    private StackPane buildCard(String raceId, String displayName, int index) {
+    private StackPane buildCard(GameCharacter character, int index) {
+        boolean locked = completed[index];
+
         VBox box = new VBox(20);
         box.setAlignment(Pos.CENTER);
 
         // Background square (border/frame for the portrait).
         Rectangle portrait = new Rectangle(300, 300);
         portrait.setFill(Color.web("#222222"));
-        portrait.setStroke(Color.web("#00FF66"));
+        portrait.setStroke(Color.web(locked ? "#555555" : "#00FF66"));
         portrait.setStrokeWidth(3);
 
         // Portrait art layered on top of the square.
         ImageView portraitImage = new ImageView();
         try {
-            portraitImage.setImage(new Image(getClass().getResourceAsStream(
-                    "/images/characters/" + raceId + ".png")));
+            portraitImage.setImage(new Image(getClass().getResourceAsStream(character.portraitPath())));
             portraitImage.setFitWidth(280);
             portraitImage.setFitHeight(280);
             portraitImage.setPreserveRatio(true);
             portraitImage.setSmooth(false); // keep pixel-art crisp
         } catch (Exception e) {
-            System.err.println("Upsi hat nicht funktioniert (kein portrait fuer " + raceId + ") :(");
+            System.err.println("Upsi hat nicht funktioniert (kein portrait fuer " + character.raceId() + ") :(");
         }
 
         StackPane portraitStack = new StackPane(portrait, portraitImage);
         portraitStack.setAlignment(Pos.CENTER);
         portraitStacks.add(portraitStack);
 
-        Label label = new Label(displayName);
+        if (locked) {
+            // grey out already-played characters and stamp them as done
+            ColorAdjust desaturate = new ColorAdjust();
+            desaturate.setSaturation(-0.9);
+            desaturate.setBrightness(-0.35);
+            portraitStack.setEffect(desaturate);
+
+            Label doneStamp = new Label("PLAYED");
+            doneStamp.setFont(CARD_LABEL_FONT);
+            doneStamp.setTextFill(Color.web("#FF4C4C"));
+            doneStamp.setRotate(-18);
+            portraitStack.getChildren().add(doneStamp);
+        }
+
+        Label label = new Label(character.displayName());
         label.setFont(CARD_LABEL_FONT);
-        label.setTextFill(Color.web("#00FF66"));
+        label.setTextFill(Color.web(locked ? "#666666" : "#00FF66"));
 
         box.getChildren().addAll(portraitStack, label);
 
         StackPane card = new StackPane(box);
-        card.setCursor(Cursor.HAND);
         card.setMinWidth(400);   // 300 * 1.25 scale + margin, so growth stays inside this card's own space
         card.setPrefWidth(400);
         card.setAlignment(Pos.CENTER);
 
-        // mouse hover = same as arrow key selection
-        card.setOnMouseEntered(e -> selectCard(index));
-        // click = confirm
-        card.setOnMouseClicked(e -> {
-            selectCard(index);
-            confirmSelection();
-        });
+        if (!locked) {
+            card.setCursor(Cursor.HAND);
+            card.setOnMouseEntered(e -> selectCard(index));      // hover = arrow key selection
+            card.setOnMouseClicked(e -> { selectCard(index); confirmSelection(); }); // click = confirm
+        }
 
         return card;
     }
 
+    private int firstSelectable() {
+        for (int i = 0; i < completed.length; i++) {
+            if (!completed[i]) return i;
+        }
+        return 0; // everything locked (shouldn't happen: flow routes to the final screen instead)
+    }
+
+    /** Walks in {@code direction} from {@code from}, wrapping, until a still-playable card is found. */
+    private int nextSelectable(int from, int direction) {
+        int n = completed.length;
+        for (int step = 1; step <= n; step++) {
+            int candidate = ((from + direction * step) % n + n) % n;
+            if (!completed[candidate]) return candidate;
+        }
+        return from;
+    }
+
     private void selectCard(int index) {
+        if (completed[index]) return; // can't highlight a locked character
         selectedIndex = index;
         for (int i = 0; i < cards.size(); i++) {
+            if (completed[i]) continue;
             boolean isSelected = (i == selectedIndex);
             StackPane portraitStack = portraitStacks.get(i);
 
@@ -167,23 +206,16 @@ public class CharCreatorScene extends ModularScene {
     }
 
     private void confirmSelection() {
-        String chosenRace = RACE_IDS[selectedIndex];
-        System.out.println("Race selected: " + chosenRace);
-        payload = payload.withMetadata("SELECTED_RACE", chosenRace);
+        if (completed[selectedIndex]) return;
 
-        String storyFile = switch (chosenRace) {
-            case "dragonborn" -> "/story/Dragonborn/prologueDB.json";
-            case "dwarf" -> "/story/Dwarf/prologueDwarf.json";
-            // case "furry" -> "/story/Furry/prologueFurry.json"; // Furry wird rausgeschrieben
-            default -> null;
-        };
+        GameCharacter chosen = ROSTER[selectedIndex];
+        System.out.println("Character selected: " + chosen.displayName());
 
-        if (storyFile != null) {
-            ScenePayload dialoguePayload = new ScenePayload("DIALOGUE_SCENE", payload.activeHeroId())
-                    .withMetadata("STORY_FILE", storyFile);
-            SceneDirector.switchScene(new StandardDialogueScene(), dialoguePayload);
-        } else {
-            System.out.println("No story file wired up for '" + chosenRace + "' yet.");
-        }
+        // activeHeroId now carries the canonical character name for the whole run,
+        // so the ending is recorded against the right character.
+        ScenePayload dialoguePayload = new ScenePayload("DIALOGUE_SCENE", chosen.displayName())
+                .withMetadata("SELECTED_RACE", chosen.raceId())
+                .withMetadata("STORY_FILE", chosen.prologueStoryFile());
+        SceneDirector.switchScene(new StandardDialogueScene(), dialoguePayload);
     }
 }

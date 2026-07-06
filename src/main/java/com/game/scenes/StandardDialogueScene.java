@@ -88,33 +88,38 @@ public class StandardDialogueScene extends ModularScene {
             return;
         }
 
-        if (node.getChoices() == null || node.getChoices().isEmpty()) {
-            if (node.getBackgroundPath() != null) view.setBackgroundImage(node.getBackgroundPath());
-            view.setPortraits(node.getLeftPortrait(), node.getRightPortrait());
-            view.showLine(node.getSpeaker(), node.getText());
-            if (node.getTriggerAction() != null) {
-                handleTrigger(node.getTriggerAction(), node.getActionParameter());
-            }
-            return;
-        }
-
         currentNodeId = nodeId;
-
-        if (node.getTriggerAction() != null) {
-            handleTrigger(node.getTriggerAction(), node.getActionParameter());
-        }
 
         if (node.getBackgroundPath() != null) {
             view.setBackgroundImage(node.getBackgroundPath());
         }
-
         view.setPortraits(node.getLeftPortrait(), node.getRightPortrait());
         view.setActiveSide(node.getActiveSide());
         view.showLine(node.getSpeaker(), node.getText());
 
-        List<DialogueView.ChoiceOption> options = new ArrayList<>();
-        for (DialogueChoice choice : node.getChoices()) {options.add(new DialogueView.ChoiceOption(choice.getText(), () -> handleChoice(choice), true));}
+        // Ending node: let the player read the closing line, then continue into the
+        // run-end screen via a synthetic "continue" choice (instead of snapping away).
+        if (isEndingTrigger(node.getTriggerAction())) {
+            String endingKey = node.getActionParameter();
+            List<DialogueView.ChoiceOption> endOption = new ArrayList<>();
+            endOption.add(new DialogueView.ChoiceOption("» Weiter", () -> endRun(endingKey), true));
+            view.setChoices(endOption);
+            return;
+        }
 
+        // Mid-story trigger: persist its flag immediately so later runs can read it.
+        if (node.getTriggerAction() != null) {
+            handleTrigger(node.getTriggerAction(), node.getActionParameter());
+        }
+
+        DatabaseManager db = DatabaseManager.getInstance();
+        List<DialogueView.ChoiceOption> options = new ArrayList<>();
+        if (node.getChoices() != null) {
+            for (DialogueChoice choice : node.getChoices()) {
+                boolean unlocked = choice.getRequiredFlag() == null || db.hasMetaFlag(choice.getRequiredFlag());
+                options.add(new DialogueView.ChoiceOption(choice.getText(), () -> handleChoice(choice), unlocked));
+            }
+        }
         view.setChoices(options);
     }
 
@@ -140,31 +145,35 @@ public class StandardDialogueScene extends ModularScene {
         }
     }
 
+    private static boolean isEndingTrigger(String action) {
+        return "SET_FLAG_AND_END".equals(action);
+    }
+
+    /**
+     * Persists a mid-story trigger. Every {@code SET_FLAG_*} action writes its
+     * parameter into the meta-timeline as a flag, which is the mechanism a later
+     * run reads back to open new paths.
+     */
     private void handleTrigger(String action, String param) {
-
-        DatabaseManager db = DatabaseManager.getInstance();
-
-        switch (action) {
-
-            case "SET_FLAG_AND_END":
-
-                // 1. Flag speichern
-                if (param != null) {
-                    db.setMetaFlag(param, true);
-                }
-
-                // 2. aktueller Charakter
-                String current = payload.activeHeroId();
-
-                // 3. Run speichern
-                db.savePlaythrough(current, "BAD_END");
-
-                // 4. Zurück zur Character Selection, damit ein neuer Run gestartet werden kann.
-                ScenePayload charCreatorPayload = new ScenePayload("CHAR_CREATOR", "unassigned");
-                SceneDirector.switchScene(new CharCreatorScene(), charCreatorPayload);
-
-                break;
+        if (action == null) return;
+        if (action.startsWith("SET_FLAG") && param != null) {
+            DatabaseManager.getInstance().setMetaFlag(param, true);
         }
+    }
+
+    /** Finalises the current character's run and hands off to the run-end screen. */
+    private void endRun(String endingKey) {
+        DatabaseManager db = DatabaseManager.getInstance();
+        if (endingKey != null) {
+            db.setMetaFlag(endingKey, true);
+        }
+        String character = payload.activeHeroId();
+        db.savePlaythrough(character, endingKey != null ? endingKey : "UNKNOWN_END");
+
+        ScenePayload runEndPayload = new ScenePayload("RUN_END", character)
+                .withMetadata("CHARACTER", character)
+                .withMetadata("ENDING_KEY", endingKey);
+        SceneDirector.switchScene(new RunEndScene(), runEndPayload);
     }
 
 }
