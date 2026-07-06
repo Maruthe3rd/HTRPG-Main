@@ -1,5 +1,6 @@
 package com.game.scenes;
 
+import com.game.audio.AudioManager;
 import com.game.core.GameCharacter;
 import com.game.core.SceneDirector;
 import com.game.core.ScenePayload;
@@ -38,6 +39,7 @@ public class MainMenuScene extends ModularScene {
 
     @Override
     protected Parent initializeLayout() {
+        AudioManager.menuMood();
 
         StackPane root = new StackPane();
         root.setPrefSize(1920, 1080);

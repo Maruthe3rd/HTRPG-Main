@@ -5,13 +5,14 @@ package com.game.core;
  * character's identity so that image lookups, the canonical name stored in the
  * database and the prologue entry point never drift apart.
  *
- * <p>The Furry was written out of the final game (see the project summary); only
- * the Dragonborn and the Dwarf remain playable.
+ * <p>Three classes of the same society: the noble Dragonborn, the artisan Dwarf
+ * and the labouring Furry underclass.
  */
 public enum GameCharacter {
 
     DRAGONBORN("dragonborn", "Dragonborn", "/story/Dragonborn/prologueDB.json"),
-    DWARF("dwarf", "Dwarf", "/story/Dwarf/prologueDwarf.json");
+    DWARF("dwarf", "Dwarf", "/story/Dwarf/prologueDwarf.json"),
+    FURRY("furry", "Furry", "/story/Furry/prologueFurry.json");
 
     private final String raceId;             // lowercase id used for image asset lookups
     private final String displayName;        // canonical name persisted in the DB and shown in the UI

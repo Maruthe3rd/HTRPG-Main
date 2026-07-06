@@ -30,7 +30,8 @@ public final class DatabaseManager {
             "paths_choices",
             "hero_state",
             "relationships",
-            "inventory"
+            "inventory",
+            "explored_nodes"
     };
 
     private static final class Holder {
@@ -255,6 +256,34 @@ public final class DatabaseManager {
 
     /** A finished run: which character, which ending key they reached, and the play order. */
     public record PlaythroughRecord(String character, String endingKey, int playOrder) {}
+
+    /** Records that a story node has been visited (for the end-of-game timeline map). */
+    public void markExplored(String storyFile, String nodeId) {
+        if (storyFile == null || nodeId == null) return;
+        String sql = "INSERT OR IGNORE INTO explored_nodes(story_file, node_id) VALUES(?, ?)";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+            ps.setString(1, storyFile);
+            ps.setString(2, nodeId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** All visited nodes as "storyFile#nodeId" keys (matches StoryGraph node keys). */
+    public Set<String> getExploredNodes() {
+        String sql = "SELECT story_file, node_id FROM explored_nodes";
+        Set<String> keys = new LinkedHashSet<>();
+        try (PreparedStatement ps = getConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                keys.add(rs.getString(1) + "#" + rs.getString(2));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return keys;
+    }
 
     public boolean hasMetaFlag(String key) {
         String sql = "SELECT flag_value FROM meta_timeline_flags WHERE flag_key = ?";

@@ -1,10 +1,7 @@
 package com.game.minigameSetup.minigames;
 
 import com.game.minigameSetup.MiniGame;
-import javafx.application.Platform;
 import javafx.scene.image.Image;
-//import org.example.GamePanel;
-//import org.example.MiniGame;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
@@ -13,11 +10,12 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class CashCatch implements MiniGame {
 
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+    private static final int WIDTH = 1920;
+    private static final int HEIGHT = 1080;
 
     // --- shooter (top, moves left/right on its own, fires downward) ---
     private static final double SHOOTER_Y = 30;
@@ -59,7 +57,7 @@ public class CashCatch implements MiniGame {
     }
 
     // --- timer ---
-    private static final int GAME_DURATION_SECONDS = 60;
+    private static final int GAME_DURATION_SECONDS = 30;
     private long startTimeNanos = -1;
     private boolean gameOver = false;
 
@@ -70,9 +68,9 @@ public class CashCatch implements MiniGame {
     private final Image coin;
 
     public CashCatch() {
-        furry = new Image(getClass().getResource("/furry.png").toExternalForm());
-        dragonborn = new Image(getClass().getResource("/dragonbornTest.png").toExternalForm());
-        coin = new Image(getClass().getResource("/coin.png").toExternalForm());
+        furry = new Image(Objects.requireNonNull(getClass().getResource("/images/characters/furry.png")).toExternalForm());
+        dragonborn = new Image(Objects.requireNonNull(getClass().getResource("/images/characters/dragonborn.png")).toExternalForm());
+        coin = new Image(Objects.requireNonNull(getClass().getResource("/images/coin.png")).toExternalForm());
     }
 
     @Override
@@ -83,7 +81,6 @@ public class CashCatch implements MiniGame {
         double elapsed = (System.nanoTime() - startTimeNanos) / 1_000_000_000.0;
         if (elapsed >= GAME_DURATION_SECONDS) {
             gameOver = true;
-            Platform.exit();
             return;
         }
 
@@ -178,7 +175,7 @@ public class CashCatch implements MiniGame {
         switch (e.getCode()) {
             case LEFT, A -> movingLeft = true;
             case RIGHT, D -> movingRight = true;
-            case ESCAPE -> Platform.exit();
+            case ESCAPE -> gameOver = true; // bail out; the scene returns to the dialogue
             default -> {}
         }
     }
@@ -193,4 +190,23 @@ public class CashCatch implements MiniGame {
     }
 
     public int getScore() { return score; }
+
+    @Override
+    public boolean isFinished() {
+        return gameOver;
+    }
+
+    /** More coins caught = a better outcome for the story branch that follows. */
+    @Override
+    public String getResultTier() {
+        if (score >= 200) return "HIGH";
+        if (score >= 90) return "MEDIUM";
+        return "LOW";
+    }
+
+    @Override
+    public double getDesignWidth() { return WIDTH; }
+
+    @Override
+    public double getDesignHeight() { return HEIGHT; }
 }

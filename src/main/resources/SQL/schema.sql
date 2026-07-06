@@ -38,3 +38,9 @@ CREATE TABLE IF NOT EXISTS inventory (
     quantity INTEGER DEFAULT 1,
     transcends_timeline BOOLEAN DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS explored_nodes (
+    story_file TEXT NOT NULL,
+    node_id TEXT NOT NULL,
+    PRIMARY KEY (story_file, node_id)
+);

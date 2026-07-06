@@ -11,22 +11,31 @@ public final class Endings {
 
     public record Ending(String title, String flavor, boolean good) {}
 
-    private static final Map<String, Ending> KNOWN = Map.of(
-            "METAKEY_DRAGONBORN_DEAD",
-            new Ending("Gefallen",
-                    "Der Drachengeborene stirbt, bevor sein Werk vollendet ist.", false),
-            "METAKEY_DRAGONBORN_GOOD_END",
-            new Ending("Der Staatsmann",
-                    "Der Drachengeborene übersteht die Wirren der Politik.", true),
-            "METAKEY_DWARF_DEAD_LACK_OF_EQUIPMENT",
-            new Ending("Schlecht gerüstet",
-                    "Der Zwerg zieht ohne genügend Waffen in den Kampf – und fällt.", false),
-            "METAKEY_DWARF_DEAD_LACK_OF_PEOPLE",
-            new Ending("Allein gelassen",
-                    "Dem Zwerg fehlen die Verbündeten – die Revolution erstickt im Keim.", false),
-            "METAKEY_DWARF_GOOD_END",
-            new Ending("Der Schmied der Freiheit",
-                    "Der Zwerg überlebt und rüstet die Revolution.", true)
+    private static final Map<String, Ending> KNOWN = Map.ofEntries(
+            Map.entry("METAKEY_DRAGONBORN_DEAD",
+                    new Ending("Gefallen",
+                            "Der Drachengeborene stirbt, bevor sein Werk vollendet ist.", false)),
+            Map.entry("METAKEY_DRAGONBORN_GOOD_END",
+                    new Ending("Der Staatsmann",
+                            "Der Drachengeborene übersteht die Wirren der Politik.", true)),
+            Map.entry("METAKEY_DWARF_DEAD_LACK_OF_EQUIPMENT",
+                    new Ending("Schlecht gerüstet",
+                            "Der Zwerg zieht ohne genügend Waffen in den Kampf – und fällt.", false)),
+            Map.entry("METAKEY_DWARF_DEAD_LACK_OF_PEOPLE",
+                    new Ending("Allein gelassen",
+                            "Dem Zwerg fehlen die Verbündeten – die Revolution erstickt im Keim.", false)),
+            Map.entry("METAKEY_DWARF_GOOD_END",
+                    new Ending("Der Schmied der Freiheit",
+                            "Der Zwerg überlebt und rüstet die Revolution.", true)),
+            Map.entry("METAKEY_FURRY_GOOD_END",
+                    new Ending("Die Ketten zerbrechen",
+                            "Der Unterschicht gelingt der Aufstand – die Unterdrückung endet.", true)),
+            Map.entry("METAKEY_FURRY_DEAD_CRUSHED",
+                    new Ending("Niedergeschlagen",
+                            "Ohne Waffen wird der Aufstand blutig zerschlagen.", false)),
+            Map.entry("METAKEY_FURRY_SUBMITS",
+                    new Ending("Gebeugt",
+                            "Der Kopf bleibt unten. Man überlebt – doch nichts ändert sich.", false))
     );
 
     private Endings() {}

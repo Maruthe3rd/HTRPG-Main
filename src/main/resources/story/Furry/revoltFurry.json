@@ -1,0 +1,58 @@
+{
+  "sceneId": "REVOLT_FURRY",
+  "startNodeId": "NODE_ARMED_START",
+  "nodes": {
+    "NODE_ARMED_START": {
+      "speaker": "Anführer",
+      "text": "Zwergenstahl in jeder Faust! Heute zahlen sie für jeden Tag Hunger. Die Frage ist nur, wie viel Blut es kostet.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "choices": [
+        {
+          "text": "Die Wachen an den bewährten Herzog erinnern und zum Überlaufen bewegen",
+          "requiredFlag": "METAKEY_DRAGONBORN_GOOD_END",
+          "targetNodeId": "NODE_GUARDS_DEFECT"
+        },
+        {
+          "text": "Die Palasttore rammen",
+          "targetNodeId": "NODE_STORM_GATES"
+        }
+      ]
+    },
+    "NODE_GUARDS_DEFECT": {
+      "speaker": "THE VOICE",
+      "text": "Die Wachen erinnern sich an einen Herzog, der einst für das Volk sprach. Sie senken die Speere und öffnen die Tore. Kein Blut – nur ein Ende.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "choices": [
+        {
+          "text": "Den Palast betreten",
+          "targetNodeId": "NODE_VICTORY"
+        }
+      ]
+    },
+    "NODE_STORM_GATES": {
+      "speaker": "THE VOICE",
+      "text": "Stahl trifft Stahl. Es ist teuer erkämpft – doch mit Zwergenwaffen bricht die Linie des Adels endlich.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "choices": [
+        {
+          "text": "Bis zum Thronsaal vordringen",
+          "targetNodeId": "NODE_VICTORY"
+        }
+      ]
+    },
+    "NODE_VICTORY": {
+      "speaker": "Anführer",
+      "text": "Es ist vorbei. Keine Herzöge mehr, kein goldener Regen über Hungernden. Wir haben überlebt – alle drei Stände, unter einem Dach.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_FURRY_GOOD_END"
+    },
+    "NODE_BAREHANDED": {
+      "speaker": "THE VOICE",
+      "text": "Fäuste gegen Klingen. Ihr seid viele – aber Mut hält keine Armbrustbolzen auf. Der Aufstand ertrinkt in seinem eigenen Blut.",
+      "backgroundPath": "/images/street_riot.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_FURRY_DEAD_CRUSHED"
+    }
+  }
+}

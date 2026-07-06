@@ -3,6 +3,7 @@ package com.game.scenes;
 import com.game.core.SceneDirector;
 import com.game.core.ScenePayload;
 import com.game.minigameSetup.MiniGame;
+import com.game.minigameSetup.minigames.CashCatch;
 import com.game.minigameSetup.minigames.CashDrop;
 import com.game.minigameSetup.minigames.PolicySwiper;
 import com.game.minigameSetup.minigames.SmithyGame;
@@ -52,6 +53,7 @@ public class MiniGameScene extends ModularScene {
             case "SMITHY" -> new SmithyGame(canvas);
             case "POLICY_SWIPER" -> new PolicySwiper();
             case "CASH_DROP" -> new CashDrop();
+            case "CASH_CATCH" -> new CashCatch();
             default -> throw new IllegalArgumentException("Unknown minigame id: " + minigameId);
         };
     }

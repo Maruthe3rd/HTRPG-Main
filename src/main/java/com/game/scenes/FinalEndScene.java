@@ -1,5 +1,6 @@
 package com.game.scenes;
 
+import com.game.audio.AudioManager;
 import com.game.core.Endings;
 import com.game.core.GameCharacter;
 import com.game.core.SceneDirector;
@@ -35,6 +36,8 @@ public class FinalEndScene extends ModularScene {
 
     @Override
     protected Parent initializeLayout() {
+        AudioManager.menuMood();
+
         DatabaseManager db = DatabaseManager.getInstance();
 
         // Keep the most recent ending per character (records come oldest-first).
@@ -108,9 +111,10 @@ public class FinalEndScene extends ModularScene {
         hint.setMaxWidth(1000);
         hint.setAlignment(Pos.CENTER);
 
+        Label timelineMap = RetroUi.menuOption("» Zeitlinien-Karte ansehen", this::goToTimelineMap);
         Label newTimeline = RetroUi.menuOption("» Neue Zeitlinie starten", this::startNewTimeline);
         Label backOption = RetroUi.menuOption("» Zurück zum Menü", this::goToMenu);
-        VBox actions = new VBox(12, newTimeline, backOption);
+        VBox actions = new VBox(12, timelineMap, newTimeline, backOption);
         actions.setAlignment(Pos.CENTER);
         VBox.setMargin(actions, new Insets(24, 0, 0, 0));
 
@@ -130,6 +134,10 @@ public class FinalEndScene extends ModularScene {
         });
 
         return root;
+    }
+
+    private void goToTimelineMap() {
+        SceneDirector.switchScene(new TreeMapScene(), new ScenePayload("TIMELINE_MAP", "unassigned"));
     }
 
     /** Wipes the run history (keeping meta flags) so the loop can be replayed in a new order. */

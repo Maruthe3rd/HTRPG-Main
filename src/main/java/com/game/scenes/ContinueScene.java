@@ -1,5 +1,6 @@
 package com.game.scenes;
 
+import com.game.audio.AudioManager;
 import com.game.core.Endings;
 import com.game.core.GameCharacter;
 import com.game.core.SceneDirector;
@@ -33,6 +34,8 @@ public class ContinueScene extends ModularScene {
 
     @Override
     protected Parent initializeLayout() {
+        AudioManager.menuMood();
+
         DatabaseManager db = DatabaseManager.getInstance();
         List<PlaythroughRecord> runs = db.getCompletedPlaythroughs();
         boolean allDone = GameCharacter.allCompleted(db.getCompletedCharacters());

@@ -14,9 +14,9 @@ public final class MetaTimelineManager {
 
     public static final String DRAGONBORN = "Dragonborn";
     public static final String DWARF = "Dwarf";
+    public static final String FURRY = "Furry";
 
-    // The Furry was written out of the final game; only these two remain playable.
-    private static final String[] ALL_CHARACTERS = {DRAGONBORN, DWARF};
+    private static final String[] ALL_CHARACTERS = {DRAGONBORN, DWARF, FURRY};
 
     private final DatabaseManager databaseManager;
     private final Object operationLock = new Object();

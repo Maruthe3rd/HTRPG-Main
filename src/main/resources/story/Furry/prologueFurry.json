@@ -4,15 +4,101 @@
   "nodes": {
     "NODE_START": {
       "speaker": "THE VOICE",
-      "text": "Du erwachst in der Unterstadt, so wie an jedem anderen Tag deines Lebens - kein Titel, kein Erbe, nur das, was du dir selbst erarbeitest.",
+      "text": "Unten in der Stadt, wo der Rauch der Werkstätten den Himmel grau färbt, knurrt dein Magen. Über dir feiert der Adel einen neuen Herzog. Heute regnet es Gold – für die, die schnell genug sind.",
+      "backgroundPath": "/images/lower_city.jpg",
+      "choices": [
+        {
+          "text": "Dich in die Menge unter dem goldenen Regen drängen",
+          "minigameId": "CASH_CATCH",
+          "targetNodeId": "NODE_RAIN_SOME",
+          "targetNodeIdHigh": "NODE_RAIN_RICH",
+          "targetNodeIdMedium": "NODE_RAIN_SOME",
+          "targetNodeIdLow": "NODE_RAIN_POOR"
+        },
+        {
+          "text": "Dich zu den Aufständischen schleichen",
+          "targetNodeId": "NODE_MEET_REBELS"
+        },
+        {
+          "text": "Den Kopf einziehen und verschwinden",
+          "targetNodeId": "NODE_HIDE"
+        }
+      ]
+    },
+    "NODE_RAIN_RICH": {
+      "speaker": "THE VOICE",
+      "text": "Deine Pfoten sind schneller als der Neid der anderen. Genug Gold für Brot – und für eine Klinge.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "triggerAction": "SET_FLAG_furryGatheredCoin",
+      "actionParameter": "METAKEY_FURRY_HAS_COIN",
+      "choices": [
+        {
+          "text": "Mit vollem Beutel zu den Aufständischen",
+          "targetNodeId": "NODE_MEET_REBELS"
+        }
+      ]
+    },
+    "NODE_RAIN_SOME": {
+      "speaker": "THE VOICE",
+      "text": "Ein paar Münzen. Genug, um heute nicht zu hungern – mehr nicht.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "choices": [
+        {
+          "text": "Weiter zu den Aufständischen",
+          "targetNodeId": "NODE_MEET_REBELS"
+        }
+      ]
+    },
+    "NODE_RAIN_POOR": {
+      "speaker": "THE VOICE",
+      "text": "Getreten, gedrängt, leer ausgegangen. Der Hunger bleibt, der Zorn wächst.",
+      "backgroundPath": "/images/throne_hall.jpg",
+      "choices": [
+        {
+          "text": "Wütend zu den Aufständischen",
+          "targetNodeId": "NODE_MEET_REBELS"
+        }
+      ]
+    },
+    "NODE_MEET_REBELS": {
+      "speaker": "Anführer",
+      "text": "Du bist gekommen. Gut. Heute Nacht stürmen wir den Palast. Die Frage ist nur: womit?",
       "backgroundPath": "/images/street_riot.jpg",
       "choices": [
         {
-          "text": "Sich umgucken",
-          "targetNodeId": "NODE_FLASHBACK_START",
-          "targetStoryFile": "/story/Dwarf/revolutionDwarf.json"
+          "text": "Mit den Waffen, die der Zwerg der Revolution geschmiedet hat",
+          "requiredFlag": "METAKEY_DWARF_GOOD_END",
+          "targetStoryFile": "/story/Furry/revoltFurry.json",
+          "targetNodeId": "NODE_ARMED_START"
+        },
+        {
+          "text": "Mit bloßen Fäusten und blindem Mut",
+          "targetStoryFile": "/story/Furry/revoltFurry.json",
+          "targetNodeId": "NODE_BAREHANDED"
+        },
+        {
+          "text": "Doch nicht. Das ist Selbstmord.",
+          "targetNodeId": "NODE_HIDE"
         }
       ]
+    },
+    "NODE_HIDE": {
+      "speaker": "THE VOICE",
+      "text": "Du drückst dich in einen Hinterhof, bis die Schreie verklingen. Am Morgen ist alles wie zuvor – nur ärmer.",
+      "backgroundPath": "/images/lower_city.jpg",
+      "choices": [
+        {
+          "text": "Weiterleben. Irgendwie.",
+          "targetNodeId": "NODE_SUBMIT"
+        }
+      ]
+    },
+    "NODE_SUBMIT": {
+      "speaker": "THE VOICE",
+      "text": "Du überlebst. Der Adel bleibt. Der Hunger bleibt. Vielleicht braucht es eine andere Zeitlinie, einen anderen Anfang.",
+      "backgroundPath": "/images/lower_city.jpg",
+      "triggerAction": "SET_FLAG_AND_END",
+      "actionParameter": "METAKEY_FURRY_SUBMITS"
     }
   }
 }

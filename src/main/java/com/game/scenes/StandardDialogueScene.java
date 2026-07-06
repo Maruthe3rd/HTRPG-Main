@@ -2,6 +2,8 @@ package com.game.scenes;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.game.audio.AudioManager;
+import com.game.core.GameCharacter;
 import com.game.core.SceneDirector;
 import com.game.core.ScenePayload;
 import com.game.dialogue.DialogueChoice;
@@ -9,6 +11,7 @@ import com.game.dialogue.DialogueNode;
 import com.game.dialogue.DialogueTemplate;
 import com.game.state.DatabaseManager;
 import com.game.ui.DialogueView;
+import com.game.ui.Portraits;
 import javafx.scene.Parent;
 
 import java.io.IOException;
@@ -27,6 +30,7 @@ public class StandardDialogueScene extends ModularScene {
     private String currentNodeId;
     private DialogueView view;
     private String storyFile; // kept so we can hand it back to ourselves after a minigame
+    private GameCharacter protagonist; // whose sprite sits opposite the speaking NPC
 
     public StandardDialogueScene() {
         super();
@@ -34,6 +38,8 @@ public class StandardDialogueScene extends ModularScene {
 
     @Override
     protected void onEnter(ScenePayload payload) {
+        protagonist = GameCharacter.fromDisplayName(payload.activeHeroId());
+
         storyFile = payload.metadata("STORY_FILE", String.class);
         if (storyFile == null) {
             storyFile = DEFAULT_STORY_FILE;
@@ -89,12 +95,27 @@ public class StandardDialogueScene extends ModularScene {
         }
 
         currentNodeId = nodeId;
+        DatabaseManager.getInstance().markExplored(storyFile, nodeId); // for the end-of-game timeline map
 
         if (node.getBackgroundPath() != null) {
             view.setBackgroundImage(node.getBackgroundPath());
+            updateSceneAudio(node.getBackgroundPath());
         }
-        view.setPortraits(node.getLeftPortrait(), node.getRightPortrait());
-        view.setActiveSide(node.getActiveSide());
+
+        // Portraits: protagonist on the right, the speaking NPC (Bruder, Vater, …)
+        // on the left. Explicit portraits in the JSON win; otherwise infer from speaker.
+        String protagonistSprite = (protagonist != null) ? protagonist.portraitBigPath() : null;
+        String npcSprite = Portraits.spriteForSpeaker(node.getSpeaker());
+        String left  = (node.getLeftPortrait()  != null) ? node.getLeftPortrait()  : npcSprite;
+        String right = (node.getRightPortrait() != null) ? node.getRightPortrait() : protagonistSprite;
+        view.setPortraits(left, right);
+
+        String activeSide = node.getActiveSide();
+        if (activeSide == null) {
+            activeSide = (npcSprite != null) ? "LEFT" : null; // highlight the speaking NPC
+        }
+        view.setActiveSide(activeSide);
+
         view.showLine(node.getSpeaker(), node.getText());
 
         // Ending node: let the player read the closing line, then continue into the
@@ -143,6 +164,13 @@ public class StandardDialogueScene extends ModularScene {
         } else {
             showNode(choice.getTargetNodeId());
         }
+    }
+
+    /** Picks the mood for a scene from its background: the street riot gets tense music + crowd roar. */
+    private void updateSceneAudio(String backgroundPath) {
+        boolean revolt = backgroundPath.contains("street_riot");
+        AudioManager.playMusic(revolt ? AudioManager.TENSE_THEME : AudioManager.MAIN_THEME);
+        AudioManager.setAmbience(revolt ? AudioManager.RIOT_AMBIENCE : null);
     }
 
     private static boolean isEndingTrigger(String action) {

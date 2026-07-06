@@ -1,5 +1,6 @@
 package com.game.scenes;
 
+import com.game.audio.AudioManager;
 import com.game.core.Endings;
 import com.game.core.GameCharacter;
 import com.game.core.SceneDirector;
@@ -36,6 +37,8 @@ public class RunEndScene extends ModularScene {
 
     @Override
     protected Parent initializeLayout() {
+        AudioManager.menuMood();
+
         Endings.Ending ending = Endings.describe(endingKey);
         boolean allDone = allCharactersCompleted();
 

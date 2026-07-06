@@ -209,8 +209,8 @@ public class DialogueView extends StackPane {
         rightPortraitView.setTranslateY(100);
         StackPane.setAlignment(rightPortraitView, Pos.BOTTOM_RIGHT);
 
-        setPortraits("/images/characters/dwarfBig.png","/images/characters/furryBig.png");
-
+        // Portraits are assigned per node by the scene (protagonist + speaking NPC);
+        // no generic defaults, so narrator-only lines don't show a random character.
         applyPortraitFocus(leftPortraitView, true);
         applyPortraitFocus(rightPortraitView, true);
 
