@@ -69,8 +69,8 @@
       "choices": [
         {
           "text": "Weiter",
-          "targetNodeId": "NODE_FAILED_REVOLUTION_START",
-          "targetStoryFile": "/story/Dragonborn/failedRevolutionDB.json"
+          "targetNodeId": "NODE_REVOLUTION_START",
+          "targetStoryFile": "/story/Dragonborn/revolutionDB.json"
         }
       ]
     },
@@ -82,8 +82,8 @@
       "choices": [
         {
           "text": "Weiter",
-          "targetNodeId": "NODE_REVOLUTION_START",
-          "targetStoryFile": "/story/Dragonborn/revolutionDB.json"
+          "targetNodeId": "NODE_FAILED_REVOLUTION_START",
+          "targetStoryFile": "/story/Dragonborn/failedRevolutionDB.json"
         }
       ]
     }

@@ -113,9 +113,9 @@
       "backgroundPath": "/images/royal_room.jpg",
       "choices": [
         {
-          "text": "Weiter zur Politik",
+          "text": "Weiter",
           "targetNodeId": "NODE_UNREST_START",
-          "targetStoryFile": "/story/Dragonborn/politicsDB.json"
+          "targetStoryFile": "/story/Dragonborn/crowdUnrestDB.json"
         }
       ]
     }
