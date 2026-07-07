@@ -11,10 +11,12 @@ import com.game.ui.RetroUi;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -35,20 +37,29 @@ import java.util.TreeMap;
 /**
  * End-of-game timeline map. Shows each character's branch graph with fog of war:
  * visited nodes are drawn solid, their not-yet-taken branches appear as "?", and
- * everything beyond an unexplored node stays hidden. Reachable only from the
- * final overview once both characters have been played.
+ * everything beyond an unexplored node stays hidden. Clicking a discovered node
+ * opens its detail panel with the decisions available at that point. Reachable
+ * only from the final overview once every character has been played.
  */
 public class TreeMapScene extends ModularScene {
 
-    private static final double CANVAS_W = 1520;
-    private static final double CANVAS_H = 700;
+    private static final double CANVAS_W = 1150;
+    private static final double CANVAS_H = 690;
     private static final double NODE = 30;
 
     private Set<String> explored;
     private GameCharacter selected;
     private Canvas canvas;
     private Label caption;
+    private VBox detailContent;
     private final List<StackPane> tabs = new ArrayList<>();
+
+    // per-draw state, kept so mouse clicks can hit-test the rendered nodes
+    private StoryGraph currentGraph;
+    private final Map<String, double[]> positions = new HashMap<>();
+    private final Set<String> normalVisible = new HashSet<>();
+    private final Set<String> questionVisible = new HashSet<>();
+    private String selectedKey;
 
     @Override
     protected void onEnter(ScenePayload payload) {
@@ -68,30 +79,36 @@ public class TreeMapScene extends ModularScene {
         root.setStyle("-fx-background-color: " + RetroUi.BG_DARK + ";");
 
         Label title = new Label("Zeitlinien-Karte");
-        title.setFont(RetroUi.title(64));
+        title.setFont(RetroUi.title(56));
         title.setTextFill(Color.web(RetroUi.ACCENT_GREEN));
 
         HBox tabRow = buildTabs();
 
         canvas = new Canvas(CANVAS_W, CANVAS_H);
+        canvas.setOnMouseClicked(e -> handleClick(e.getX(), e.getY()));
+        canvas.setOnMouseMoved(e -> canvas.setCursor(
+                nodeAt(e.getX(), e.getY(), normalVisible) != null ? Cursor.HAND : Cursor.DEFAULT));
         StackPane canvasFrame = new StackPane(canvas);
         canvasFrame.setMaxSize(CANVAS_W, CANVAS_H);
         canvasFrame.setStyle(
                 "-fx-border-color: " + RetroUi.ACCENT_GREEN + "; -fx-border-width: 2; -fx-background-color: #050705;");
 
+        HBox mapRow = new HBox(16, canvasFrame, buildDetailPanel());
+        mapRow.setAlignment(Pos.CENTER);
+
         caption = new Label();
-        caption.setFont(RetroUi.body(24));
+        caption.setFont(RetroUi.body(20));
         caption.setTextFill(Color.web(RetroUi.ACCENT_GOLD));
 
-        Label legend = new Label("■ erkundet    ? unerforscht    ■ gutes Ende    ■ schlechtes Ende");
-        legend.setFont(RetroUi.body(18));
+        Label legend = new Label("■ erkundet (klickbar)    ? unerforscht    ■ gutes Ende    ■ schlechtes Ende");
+        legend.setFont(RetroUi.body(16));
         legend.setTextFill(Color.web("#8A948A"));
 
         Label back = RetroUi.menuOption("» Zurück", this::goToFinal);
 
-        VBox column = new VBox(18, title, tabRow, canvasFrame, caption, legend, back);
+        VBox column = new VBox(14, title, tabRow, mapRow, caption, legend, back);
         column.setAlignment(Pos.CENTER);
-        column.setPadding(new Insets(30));
+        column.setPadding(new Insets(20));
         root.getChildren().add(column);
 
         root.setFocusTraversable(true);
@@ -100,7 +117,7 @@ public class TreeMapScene extends ModularScene {
         });
         root.setOnKeyPressed(e -> {
             switch (e.getCode()) {
-                case ESCAPE, ENTER, SPACE -> goToFinal();
+                case ESCAPE -> goToFinal();
                 case LEFT -> selectCharacter((selected.ordinal() - 1 + GameCharacter.values().length)
                         % GameCharacter.values().length);
                 case RIGHT -> selectCharacter((selected.ordinal() + 1) % GameCharacter.values().length);
@@ -112,8 +129,22 @@ public class TreeMapScene extends ModularScene {
         return root;
     }
 
+    private ScrollPane buildDetailPanel() {
+        detailContent = new VBox(10);
+        detailContent.setPadding(new Insets(18));
+        showDetailHint();
+
+        ScrollPane scroll = new ScrollPane(detailContent);
+        scroll.setFitToWidth(true);
+        scroll.setPrefSize(420, CANVAS_H);
+        scroll.setMinSize(420, CANVAS_H);
+        scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;"
+                + "-fx-border-color: " + RetroUi.ACCENT_GREEN + "; -fx-border-width: 2;");
+        return scroll;
+    }
+
     private HBox buildTabs() {
-        HBox row = new HBox(24);
+        HBox row = new HBox(20);
         row.setAlignment(Pos.CENTER);
         tabs.clear();
         for (GameCharacter c : GameCharacter.values()) {
@@ -123,13 +154,13 @@ public class TreeMapScene extends ModularScene {
             } catch (Exception ignored) {
                 // portrait missing — the framed box alone still works as a tab
             }
-            portrait.setFitWidth(84);
-            portrait.setFitHeight(84);
+            portrait.setFitWidth(76);
+            portrait.setFitHeight(76);
             portrait.setPreserveRatio(true);
 
             StackPane tab = new StackPane(portrait);
-            tab.setPrefSize(96, 96);
-            tab.setCursor(javafx.scene.Cursor.HAND);
+            tab.setPrefSize(88, 88);
+            tab.setCursor(Cursor.HAND);
             int index = c.ordinal();
             tab.setOnMouseClicked(e -> selectCharacter(index));
             tabs.add(tab);
@@ -140,11 +171,12 @@ public class TreeMapScene extends ModularScene {
 
     private void selectCharacter(int index) {
         selected = GameCharacter.values()[index];
+        selectedKey = null;
+        showDetailHint();
         drawSelected();
     }
 
     private void drawSelected() {
-        // highlight the active tab
         for (int i = 0; i < tabs.size(); i++) {
             boolean active = (i == selected.ordinal());
             StackPane tab = tabs.get(i);
@@ -155,66 +187,195 @@ public class TreeMapScene extends ModularScene {
             dim.setBrightness(active ? 0 : -0.45);
             pv.setEffect(dim);
         }
-        drawGraph(canvas.getGraphicsContext2D(), StoryGraph.forCharacter(selected));
+        currentGraph = StoryGraph.forCharacter(selected);
+        drawGraph();
     }
 
-    private void drawGraph(GraphicsContext gc, StoryGraph graph) {
+    // ---- click handling ------------------------------------------------------
+
+    private void handleClick(double x, double y) {
+        String hit = nodeAt(x, y, null); // any visible node
+        if (hit == null) return;
+        if (normalVisible.contains(hit)) {
+            selectedKey = hit;
+            showDetail(currentGraph.node(hit));
+            AudioManager.playSfx(AudioManager.UI_CLICK);
+            drawGraph();
+        } else {
+            selectedKey = null;
+            showNotDiscovered();
+            drawGraph();
+        }
+    }
+
+    /** Returns the key of a node whose box contains (x,y); if {@code restrictTo} is set, only those. */
+    private String nodeAt(double x, double y, Set<String> restrictTo) {
+        for (Map.Entry<String, double[]> e : positions.entrySet()) {
+            if (restrictTo != null && !restrictTo.contains(e.getKey())) continue;
+            if (!normalVisible.contains(e.getKey()) && !questionVisible.contains(e.getKey())) continue;
+            double[] p = e.getValue();
+            if (Math.abs(x - p[0]) <= NODE / 2 + 4 && Math.abs(y - p[1]) <= NODE / 2 + 4) {
+                return e.getKey();
+            }
+        }
+        return null;
+    }
+
+    // ---- detail panel --------------------------------------------------------
+
+    private void showDetailHint() {
+        detailContent.getChildren().setAll(
+                wrapped("Klicke einen erkundeten (farbigen) Knoten, um die dortigen Entscheidungen zu sehen.",
+                        20, "#8A948A"));
+    }
+
+    private void showNotDiscovered() {
+        detailContent.getChildren().setAll(
+                wrapped("Dieser Pfad ist noch nicht erforscht.", 22, RetroUi.ACCENT_GOLD));
+    }
+
+    private void showDetail(StoryGraph.Node node) {
+        detailContent.getChildren().clear();
+
+        Label speaker = new Label(node.speaker != null && !node.speaker.isBlank() ? node.speaker : "—");
+        speaker.setFont(RetroUi.body(24));
+        speaker.setTextFill(Color.web(RetroUi.ACCENT_GREEN));
+        detailContent.getChildren().add(speaker);
+
+        detailContent.getChildren().add(wrapped(node.text != null ? node.text : "", 19, "#D8E0D8"));
+
+        if (node.ending) {
+            Endings.Ending ending = Endings.describe(node.endingKey);
+            detailContent.getChildren().add(wrapped(
+                    "▶ Ende: " + ending.title() + (Endings.isGood(node.endingKey) ? "  (gut)" : "  (schlecht)"),
+                    20, Endings.isGood(node.endingKey) ? "#00C24A" : "#FF6B6B"));
+            return;
+        }
+
+        Label header = new Label("Entscheidungen:");
+        header.setFont(RetroUi.body(22));
+        header.setTextFill(Color.web(RetroUi.ACCENT_GOLD));
+        VBox.setMargin(header, new Insets(10, 0, 0, 0));
+        detailContent.getChildren().add(header);
+
+        if (node.decisions.isEmpty()) {
+            detailContent.getChildren().add(wrapped("(keine – hier geht es geradeaus weiter)", 18, "#8A948A"));
+            return;
+        }
+
+        DatabaseManager db = DatabaseManager.getInstance();
+        for (StoryGraph.Decision d : node.decisions) {
+            VBox row = new VBox(2);
+            row.setPadding(new Insets(6, 0, 6, 0));
+
+            Label choice = new Label("› " + d.text());
+            choice.setWrapText(true);
+            choice.setMaxWidth(360);
+            choice.setFont(RetroUi.body(18));
+            choice.setTextFill(Color.WHITE);
+            row.getChildren().add(choice);
+
+            Label outcome = new Label(outcomeText(d, db));
+            outcome.setWrapText(true);
+            outcome.setMaxWidth(360);
+            outcome.setFont(RetroUi.body(15));
+            outcome.setTextFill(Color.web("#8FB89A"));
+            row.getChildren().add(outcome);
+
+            detailContent.getChildren().add(row);
+        }
+    }
+
+    private String outcomeText(StoryGraph.Decision d, DatabaseManager db) {
+        StringBuilder sb = new StringBuilder();
+        if (d.minigameId() != null) sb.append("[Minispiel] ");
+        if (d.requiredFlag() != null) {
+            sb.append(db.hasMetaFlag(d.requiredFlag()) ? "[freigeschaltet] " : "[gesperrt] ");
+        }
+
+        StoryGraph.Node target = (d.targetKey() != null && currentGraph != null)
+                ? currentGraph.node(d.targetKey()) : null;
+        if (target == null) {
+            sb.append("→ …");
+        } else if (normalVisible.contains(target.key)) {
+            if (target.ending) {
+                sb.append("→ Ende (").append(Endings.isGood(target.endingKey) ? "gut" : "schlecht").append(")");
+            } else {
+                sb.append("→ ").append(target.speaker != null ? target.speaker : "weiter");
+            }
+        } else {
+            sb.append("→ unerforscht");
+        }
+        return sb.toString();
+    }
+
+    private Label wrapped(String text, double size, String colorHex) {
+        Label l = new Label(text);
+        l.setWrapText(true);
+        l.setMaxWidth(360);
+        l.setFont(RetroUi.body(size));
+        l.setTextFill(Color.web(colorHex));
+        return l;
+    }
+
+    // ---- graph rendering -----------------------------------------------------
+
+    private void drawGraph() {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, CANVAS_W, CANVAS_H);
         drawGrid(gc);
 
-        // --- layout: column per depth, spread vertically within the column ---
+        StoryGraph graph = currentGraph;
+        positions.clear();
+        normalVisible.clear();
+        questionVisible.clear();
+
         Map<Integer, List<StoryGraph.Node>> byDepth = new TreeMap<>();
         int maxDepth = 0;
         for (StoryGraph.Node n : graph.nodes()) {
             byDepth.computeIfAbsent(n.depth, k -> new ArrayList<>()).add(n);
             maxDepth = Math.max(maxDepth, n.depth);
         }
-        double left = 70, right = CANVAS_W - 70, top = 50, bottom = CANVAS_H - 50;
-        Map<String, double[]> pos = new HashMap<>();
+        double left = 60, right = CANVAS_W - 60, top = 45, bottom = CANVAS_H - 45;
         for (Map.Entry<Integer, List<StoryGraph.Node>> e : byDepth.entrySet()) {
             List<StoryGraph.Node> col = e.getValue();
             double x = (maxDepth == 0) ? (left + right) / 2 : left + (right - left) * e.getKey() / maxDepth;
             for (int i = 0; i < col.size(); i++) {
                 double y = top + (bottom - top) * (i + 1) / (col.size() + 1.0);
-                pos.put(col.get(i).key, new double[]{x, y});
+                positions.put(col.get(i).key, new double[]{x, y});
             }
         }
 
-        // --- fog of war: explored nodes solid, their direct children as "?" ---
-        Set<String> normal = new HashSet<>();
-        Set<String> question = new HashSet<>();
         for (StoryGraph.Node n : graph.nodes()) {
-            if (explored.contains(n.key)) normal.add(n.key);
+            if (explored.contains(n.key)) normalVisible.add(n.key);
         }
-        for (String k : normal) {
+        for (String k : normalVisible) {
             for (String t : graph.node(k).targets) {
-                if (graph.node(t) != null && !normal.contains(t)) question.add(t);
+                if (graph.node(t) != null && !normalVisible.contains(t)) questionVisible.add(t);
             }
         }
-        if (normal.isEmpty()) question.add(graph.rootKey()); // nothing explored yet: at least show the entrance
+        if (normalVisible.isEmpty()) questionVisible.add(graph.rootKey());
 
-        // --- edges (only from explored nodes to a visible child) ---
         gc.setStroke(Color.web("#3A5A3A"));
         gc.setLineWidth(2);
-        for (String k : normal) {
-            double[] a = pos.get(k);
+        for (String k : normalVisible) {
+            double[] a = positions.get(k);
             if (a == null) continue;
             for (String t : graph.node(k).targets) {
-                boolean visible = normal.contains(t) || question.contains(t);
-                double[] b = pos.get(t);
+                boolean visible = normalVisible.contains(t) || questionVisible.contains(t);
+                double[] b = positions.get(t);
                 if (visible && b != null) gc.strokeLine(a[0], a[1], b[0], b[1]);
             }
         }
 
-        // --- nodes ---
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
         Color tint = characterTint(selected);
         for (StoryGraph.Node n : graph.nodes()) {
-            double[] p = pos.get(n.key);
+            double[] p = positions.get(n.key);
             if (p == null) continue;
-            boolean isNormal = normal.contains(n.key);
-            boolean isQuestion = question.contains(n.key);
+            boolean isNormal = normalVisible.contains(n.key);
+            boolean isQuestion = questionVisible.contains(n.key);
             if (!isNormal && !isQuestion) continue;
 
             double x = p[0] - NODE / 2, y = p[1] - NODE / 2;
@@ -242,6 +403,11 @@ public class TreeMapScene extends ModularScene {
                 gc.setLineWidth(2);
                 gc.strokeRoundRect(x - 4, y - 4, NODE + 8, NODE + 8, 10, 10);
             }
+            if (n.key.equals(selectedKey)) {
+                gc.setStroke(Color.web(RetroUi.ACCENT_GOLD));
+                gc.setLineWidth(3);
+                gc.strokeRoundRect(x - 6, y - 6, NODE + 12, NODE + 12, 12, 12);
+            }
             if (n.ending) {
                 gc.setFill(Color.web(Endings.isGood(n.endingKey) ? "#8CFFB0" : "#FF9C9C"));
                 gc.setFont(RetroUi.body(13));
@@ -249,8 +415,8 @@ public class TreeMapScene extends ModularScene {
             }
         }
 
-        int total = graph.nodes().size();
-        caption.setText(selected.displayName() + "  —  erkundet: " + normal.size() + " / " + total + " Knoten");
+        caption.setText(selected.displayName() + "  —  erkundet: " + normalVisible.size()
+                + " / " + graph.nodes().size() + " Knoten");
     }
 
     private void drawGrid(GraphicsContext gc) {

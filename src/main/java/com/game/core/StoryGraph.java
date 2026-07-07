@@ -33,7 +33,8 @@ public final class StoryGraph {
         public final String text;
         public final boolean ending;
         public final String endingKey;
-        public final List<String> targets = new ArrayList<>();
+        public final List<String> targets = new ArrayList<>();     // all edges (incl. minigame tiers)
+        public final List<Decision> decisions = new ArrayList<>(); // player-facing choices at this node
         public int depth;
 
         Node(String key, String storyFile, String nodeId, String speaker,
@@ -47,6 +48,9 @@ public final class StoryGraph {
             this.endingKey = endingKey;
         }
     }
+
+    /** A single choice offered at a node: its text, where it leads, and any gating/minigame. */
+    public record Decision(String text, String targetKey, String requiredFlag, String minigameId) {}
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -123,6 +127,13 @@ public final class StoryGraph {
                     if (!node.targets.contains(tk)) node.targets.add(tk);
                     queue.add(new String[]{destFile, target});
                 }
+
+                // Player-facing decision: the choice text and its primary destination.
+                String base = firstNonNull(ch.getTargetNodeId(), ch.getTargetNodeIdHigh(),
+                        ch.getTargetNodeIdMedium(), ch.getTargetNodeIdLow());
+                String decisionTarget = (base != null) ? key(destFile, base) : null;
+                node.decisions.add(new Decision(ch.getText(), decisionTarget,
+                        ch.getRequiredFlag(), ch.getMinigameId()));
             }
         }
     }
@@ -145,6 +156,13 @@ public final class StoryGraph {
                 }
             }
         }
+    }
+
+    private static String firstNonNull(String... values) {
+        for (String v : values) {
+            if (v != null) return v;
+        }
+        return null;
     }
 
     private static DialogueTemplate load(String storyFile) {
