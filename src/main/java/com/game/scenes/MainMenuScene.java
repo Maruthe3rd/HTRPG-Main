@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -92,6 +93,18 @@ public class MainMenuScene extends ModularScene {
 
 
         root.getChildren().addAll(background, layoutBox);
+
+        // Hidden dev shortcut: Ctrl+Shift+R opens the admin/reset panel.
+        root.setFocusTraversable(true);
+        root.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) root.requestFocus();
+        });
+        root.setOnKeyPressed(e -> {
+            if (e.isControlDown() && e.isShiftDown() && e.getCode() == KeyCode.R) {
+                SceneDirector.switchScene(new AdminScene(), new ScenePayload("ADMIN", "unassigned"));
+            }
+        });
+
         return root;
     }
 

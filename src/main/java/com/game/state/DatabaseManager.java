@@ -254,6 +254,33 @@ public final class DatabaseManager {
         }
     }
 
+    /**
+     * Admin/debug wipe: empties every game table (runs, meta flags, explored
+     * nodes, choices, hero/relationship/inventory rows) but keeps the schema.
+     * The save-persistence logic itself is untouched — this just clears the data.
+     */
+    public void resetAll() {
+        try (Statement st = getConnection().createStatement()) {
+            for (String table : REQUIRED_TABLES) {
+                st.executeUpdate("DELETE FROM " + table);
+            }
+            LOGGER.info("Admin reset: all game tables cleared.");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** Number of meta-timeline flags currently set (for the admin overview). */
+    public int countSetMetaFlags() {
+        String sql = "SELECT COUNT(*) FROM meta_timeline_flags WHERE flag_value = 1";
+        try (PreparedStatement ps = getConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getInt(1) : 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /** A finished run: which character, which ending key they reached, and the play order. */
     public record PlaythroughRecord(String character, String endingKey, int playOrder) {}
 
